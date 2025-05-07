@@ -52,3 +52,4 @@ export default tseslint.config({
   },
 })
 ```
+Signed by me :joy

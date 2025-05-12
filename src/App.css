@@ -1,10 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Love+Ya+Like+A+Sister&display=swap');
+@import url(index.css);
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
+  font-family: "Fira Code", monospace;
+  font-optical-sizing: auto;
+  color: #1E1506;
+  font-style: normal;
 }
-
+a, button, .logo{
+  cursor: pointer;
+}
 @keyframes grow-bar {
   0% {
     width: 0%;
@@ -28,4 +37,7 @@
 .animate-fade-slide {
   animation: fade-slide 0.3s ease-out;
 }
-
+.logo{
+  font-family: "Love Ya Like A Sister", cursive;
+  font-style: normal;
+}

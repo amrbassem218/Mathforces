@@ -9,7 +9,7 @@ export default function EmailVerificationPopup() {
   return (
     <AnimatePresence>
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="max-w-sm rounded-2xl p-6">
+            <DialogContent className="max-w-sm rounded-2xl p-6 w-110">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -26,7 +26,7 @@ export default function EmailVerificationPopup() {
                 <p className="text-sm text-muted-foreground">
                 A confirmation link was sent to your inbox. Please verify your account to continue.
                 </p>
-                <Button onClick={() => setOpen(false)} className="w-full">
+                <Button onClick={() => setOpen(false)} className="w-full cursor-pointer">
                 Got it
                 </Button>
             </motion.div>

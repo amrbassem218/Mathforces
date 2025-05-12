@@ -17,47 +17,63 @@ import { auth, db } from "../../../firebaseConfig"
 import { reload, sendEmailVerification } from "firebase/auth"
 import EmailVerificationPopup from "@/components/ui/emailVerificationPopup"
 import { useNavigate } from "react-router-dom"
-import { AlignVerticalSpaceAround, CodeSquare } from "lucide-react"
+import { AlignVerticalSpaceAround, CodeSquare, Divide } from "lucide-react"
+import { useAuthState } from "react-firebase-hooks/auth"
+import Header from "@/components/ui/Header"
 
 export function Signup() {
-    const [userError, setUserError] = useState<string>("");
+  const [user, loading] = useAuthState(auth);
+  
+  const [userError, setUserError] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [userName, setUserName] = useState<string>("");
-    const [pass, setPass] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const [userNameTaken, setUserNameTaken] = useState<boolean | null>(null);
-    const {user, signup , login, logInWithGoogle, logInWithGithub,logout} = useAuthUserContext();
+    const {signup , login, logInWithGoogle, logInWithGithub,logout} = useAuthUserContext();
     const [emailVerificationSent, setEmailVerificationSent] = useState<boolean>(false);
     const [weakPass, setWeakPass] = useState<boolean | null>(null);
     const [weakPassError, setWeakPassError] = useState<string>("");
     const navigate = useNavigate();
+    const flag = true;
     const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await signup(email, pass).then(async(cred) => {
-          await setDoc(doc(db, "users", cred.user.uid),{
-            username: userName,
-            email: email
+        if(!email){
+          setUserError("Please Enter your Email");
+        }
+        else if(!userName){
+          setUserError('Please Enter your username');
+        }
+        else if(!password){
+          setUserError('Please Enter a valid password');
+        }
+        else{
+          await signup(email, password).then(async(cred) => {
+            await setDoc(doc(db, "users", cred.user.uid),{
+              username: userName,
+              email: email
+            })
+            sendEmailVerification(cred.user).then(() => {
+              setEmailVerificationSent(true);
+            })
+            .catch((error) => {console.error(error); console.log("error here in ver")});
+            if(cred){
+              setUserError("");
+            }
+            else{
+              setUserError("Something went wrong");
+            }
           })
-          sendEmailVerification(cred.user).then(() => {
-            setEmailVerificationSent(true);
+          .catch((error:any) => {
+            if((error.code == "auth/alavenderccount-exists-with-different-credential") || (error.code == "auth/email-already-in-use")){
+              setUserError("This email is already in use");
+            }
+            else if (error.code == "auth/weak-password"){
+              setWeakPass(true);
+              setWeakPassError("Password should be at least 6 characters");
+            }
+            console.error(error);
           })
-          .catch((error) => {console.error(error); console.log("error here in ver")});
-          if(cred){
-            setUserError("");
-          }
-          else{
-            setUserError("Something went wrong");
-          }
-        })
-        .catch((error:any) => {
-          if((error.code == "auth/account-exists-with-different-credential") || (error.code == "auth/email-already-in-use")){
-            setUserError("This email is already in use");
-          }
-          else if (error.code == "auth/weak-password"){
-            setWeakPass(true);
-            setWeakPassError("Password should be at least 6 characters");
-          }
-          // console.error(error);
-        })
+        }
       }
     const handleGoogleSubmit = async(e:React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
@@ -139,20 +155,25 @@ export function Signup() {
       }
     }, [userError]);
     useEffect(() => {
-      if(pass.length > 0 && pass.length < 6){
+      if(password.length > 0 && password.length < 6){
         setWeakPass(true);
         setWeakPassError("Password should be at least 6 characters");
       }
-      else if(pass.length >= 6){
+      else if(password.length >= 6){
         setWeakPass(false);
         setWeakPassError("");
       }
-    },[pass])
+    },[password])
+    if(loading){
+    return <div>loading...</div>;
+  }
   return (
-    <form onSubmit={handleSubmit}>
-    <Card>
+    <div className="flex flex-col min-h-screen w-full">
+      <Header login={"outline"} signup={"full"}/>
+    <form onSubmit={handleSubmit} className="m-auto flex items-center justify-center flex-grow">
+    <Card className="w-120 max-w-full ">
       {(emailVerificationSent && <EmailVerificationPopup/>)}
-      <CardHeader className="space-y-1">
+      <CardHeader className="space-y-1 ">
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
           Enter your email below to create your account
@@ -160,11 +181,11 @@ export function Signup() {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline" onClick={handleGithubSubmit} type="button">
+          <Button variant="outline" className="cursor-pointer" onClick={handleGithubSubmit} type="button">
             <Icons.gitHub />
             GitHub
           </Button>
-          <Button variant="outline" onClick={handleGoogleSubmit} className="" type="button">
+          <Button variant="outline" onClick={handleGoogleSubmit} className="cursor-pointer" type="button">
             <Icons.google />
             Google
           </Button>
@@ -191,7 +212,7 @@ export function Signup() {
         </div>
         )}
         <div className="grid gap-2">
-          <Label htmlFor="email">userName</Label>
+          <Label htmlFor="email">username</Label>
           <Input id="userName" type="text" className={
             (userNameTaken === true && "border-red-500 ring-red-500 focus-visible:ring-red-500") ||
             (userNameTaken === false && "border-green-500 ring-green-500 focus-visible:ring-green-500") ||
@@ -211,7 +232,7 @@ export function Signup() {
             (weakPass === true && "border-red-500 ring-red-500 focus-visible:ring-red-500") ||
             (weakPass === false && "border-green-500 ring-green-500 focus-visible:ring-green-500") ||
             ""}
-            value={pass} onChange={(e) => setPass(e.target.value)}/>
+            value={password} onChange={(e) => setPassword(e.target.value)}/>
             {weakPass === true && (
               <p className="text-sm text-red-600 text-left">{weakPassError}</p>
             )}
@@ -220,8 +241,10 @@ export function Signup() {
       <CardFooter>
         <Button className="w-full" type="submit">Signup</Button>
       </CardFooter>
+        <p className="text-sm opacity-90">Already Have an account?-<button type="button" className="underline text-accent cursor-pointer hover:text-[#E34845] hover:font-medium" onClick={() => navigate("/signup")}>Login</button></p>
     </Card>
-      </form>
+    </form>
+    </div>
   )
 }
 export default Signup;

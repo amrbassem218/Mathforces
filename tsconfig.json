@@ -12,6 +12,14 @@
     "typeRoots": ["./node_modules/@types", "./types"],
     "lib": [
         "es5", "es6", "dom", "dom.iterable"
-    ]
+    ],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true
   },
+  "ts-node": {
+    "esm": true
+  }
 }

@@ -171,7 +171,7 @@ export function Signup() {
     <div className="flex flex-col min-h-screen w-full">
       <Header login={"outline"} signup={"full"}/>
     <form onSubmit={handleSubmit} className="m-auto flex items-center justify-center flex-grow">
-    <Card className="w-120 max-w-full ">
+    <Card className="w-120 max-w-full border-border">
       {(emailVerificationSent && <EmailVerificationPopup/>)}
       <CardHeader className="space-y-1 ">
         <CardTitle className="text-2xl">Create an account</CardTitle>
@@ -181,18 +181,18 @@ export function Signup() {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline" className="cursor-pointer" onClick={handleGithubSubmit} type="button">
+          <Button variant="outline" className="cursor-pointer border-border" onClick={handleGithubSubmit} type="button">
             <Icons.gitHub />
             GitHub
           </Button>
-          <Button variant="outline" onClick={handleGoogleSubmit} className="cursor-pointer" type="button">
+          <Button variant="outline" onClick={handleGoogleSubmit} className="cursor-pointer border-border" type="button">
             <Icons.google />
             Google
           </Button>
         </div>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-card px-2 text-muted-foreground">
@@ -241,7 +241,7 @@ export function Signup() {
       <CardFooter>
         <Button className="w-full" type="submit">Signup</Button>
       </CardFooter>
-        <p className="text-sm opacity-90">Already Have an account?-<button type="button" className="underline text-accent cursor-pointer hover:text-[#E34845] hover:font-medium" onClick={() => navigate("/signup")}>Login</button></p>
+        <p className="text-sm opacity-90">Already Have an account?-<button type="button" className="underline text-accent cursor-pointer hover:text-[#E34845] hover:font-medium" onClick={() => navigate("/login")}>Login</button></p>
     </Card>
     </form>
     </div>

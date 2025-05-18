@@ -4,6 +4,7 @@ import Error from "./pages/error";
 import Login from "./pages/login";
 import SignUp from "./pages/signup";
 import ProtectedRoutes from "./components/ui/protectedroutes";
+import Contest from "./pages/contest";
 
 export const router = createBrowserRouter([
     {
@@ -12,6 +13,11 @@ export const router = createBrowserRouter([
             {
                 element: <Home/>,
                 path: "/",
+                errorElement: <Error/>
+            },
+            {
+                element: <Contest/>,
+                path: "/testcontest",
                 errorElement: <Error/>
             },
         ]

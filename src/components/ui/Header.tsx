@@ -30,7 +30,7 @@ const Header: React.FunctionComponent<IHeaderProps> = (props) => {
             <div className="flex flex-col justify-items-start items-start ">
               <h1 className="font-bold">amrbassem218</h1>
               <div className="flex gap-2 items-center">
-                <div className="bg-purple-700 py-1 px-0.5 rounded-md"><p className="text-xs tracking-tighter">Cd. Master</p></div>
+                <div className="bg-purple-700/70 p-1 rounded-md"><p className="text-xs tracking-tighter">Cd. Master</p></div>
                 <p className="text-sm">2500Elo</p>
               </div>
             </div>

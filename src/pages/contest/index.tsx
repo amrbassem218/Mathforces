@@ -12,13 +12,19 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { MathJax, MathJaxContext } from "better-react-mathjax";
+import { useProblems } from "../../../texconverter";
 
 const config = {
-    loader: { load: ["[tex]/html"] },
+    loader: { load: ['[tex]/ams'] },
     tex: {
-        packages: { "[+]": ["html"] },
-        inlineMath: [["$", "$"]],
-        displayMath: [["$$", "$$"]]
+        packages: { '[+]': ['ams'] },
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        processEnvironments: true,
+        processEscapes: true
+    },
+    startup: {
+        typeset: true
     }
 };
 
@@ -28,13 +34,20 @@ interface IContestProps {
 const Contest: React.FunctionComponent<IContestProps> = (props) => {
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
+    const { problems, loading: problemsLoading, error: problemsError } = useProblems();
     
-    if(loading){
+    if(loading || problemsLoading){
         return <div>loading...</div>
     }
+
+    if(problemsError) {
+        return <div>Error loading problems: {problemsError}</div>
+    }
+    
     if(!user){
         navigate('/login');
     }
+
     const activeTab = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md"
     
     return (
@@ -53,30 +66,40 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                             <div className='grid grid-cols-12'>
                                 <div className='col-span-1 border-2 border-black'>
                                     <TabsList className='flex flex-col gap-2'>
-                                        <TabsTrigger value="A">A</TabsTrigger>
-                                        <TabsTrigger value="B">B</TabsTrigger>
+                                        {Object.keys(problems).map((problemKey) => (
+                                            <TabsTrigger key={problemKey} value={problemKey}>
+                                                {problemKey}
+                                            </TabsTrigger>
+                                        ))}
                                     </TabsList>
                                 </div>
                                 <div className='col-span-7'>
-                                    <TabsContent value="A">
-                                        <h1 className='text-2xl font-semibold mb-2'>Problem A</h1>
-                                        <Card className='border-border'>
-                                            <CardContent className='text-lg/8'>
-                                                <MathJax>{"Let $x$ be a variable. Then $x^2$ is its square."}</MathJax>
-                                            </CardContent>
-                                        </Card> 
-                                    </TabsContent>
-                                    <TabsContent value="B">
-                                        <h1 className='text-2xl font-semibold mb-2'>Problem B</h1>
-                                        <Card className='border-border'>
-                                            <CardContent className='text-lg/8 w-full max-w-full'>
-                                                <MathJax>{"Consider the equation $$\\frac{10}{4x} \\approx 2^{12}$$"}</MathJax>
-                                                <MathJax>
-                                                    {"Let $\\pi: \\{1,2,\\dots,n\\} \\to \\{1,2,\\dots,n\\}$ be a permutation such that $\\pi(\\pi(k)) \\equiv mk \\pmod{n}$"}
-                                                </MathJax>
-                                            </CardContent>
-                                        </Card> 
-                                    </TabsContent>
+                                    {Object.entries(problems).map(([problemKey, {description, enumerate, difficulty}]) => (
+                                        <TabsContent key={problemKey} value={problemKey}>
+                                            <h1 className='text-2xl font-semibold mb-2'>Problem {problemKey}</h1>
+                                            <Card className='border-border'>
+                                                <CardContent className='text-lg/8 w-full max-w-full'>
+                                                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                                                        <MathJax hideUntilTypeset={'first'}>
+                                                            {description.includes("\\begin{enumerate}") ? (
+                                                                <>
+                                                                    {description.split("\\begin{enumerate}")[0]}
+                                                                    <ul>
+                                                                        {enumerate.map((item, index) => (
+                                                                            <li key={index}>{item}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                    {description.split("\\end{enumerate}")[1]}
+                                                                </>
+                                                            ) : (
+                                                                description
+                                                            )}
+                                                        </MathJax>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </TabsContent>
+                                    ))}
                                 </div>
                                 <div className='col-span-4 border-2 border-black'></div>
                             </div>

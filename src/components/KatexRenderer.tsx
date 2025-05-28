@@ -17,20 +17,25 @@ const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
     .replace(/\\bf/g, '\\mathbf')
     .replace(/\\it/g, '\\mathit')
     .replace(/([^\\])\\over([^\\])/g, '$1\\frac{$1}{$2}')
-    .replace(/\\choose/g, '\\binom')
-  useEffect(()=>{
-    if(element.current){
-      renderMathInElement(element.current, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\[", right: "\\]", display: true},
-          {left: "\\(", right: "\\)", display: false}
-        ]
-      })
-    }
-  },[expression])
-  return <div ref={element}>{expression}</div>
+    .replace(/\\choose/g, '\\binom');
+    try {
+      useEffect(()=>{
+          
+        if(element.current){
+          renderMathInElement(element.current, {
+            delimiters: [
+              {left: "$$", right: "$$", display: true},
+              {left: "$", right: "$", display: false},
+              {left: "\\[", right: "\\]", display: true},
+              {left: "\\(", right: "\\)", display: false}
+            ]
+          })
+        }
+      },[expression])
+      return <div ref={element}>{expression}</div>
+  } catch (error) {
+    return <span>Couldn't render Problem</span>;
+  }
 };
 
 export default KaTeXRenderer;

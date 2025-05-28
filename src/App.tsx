@@ -4,7 +4,8 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Router, RouterProvider, useLocation } from 'react-router-dom'
 import router from './router'
-function App() {
+import 'katex/dist/katex.min.css';
+  function App() {
   const [count, setCount] = useState(0)
 
   return (  

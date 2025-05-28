@@ -1,42 +1,58 @@
+import KaTeXRenderer from "@/components/KatexRenderer";
 import { string } from "prop-types";
 import { useEffect, useState } from "react";
-
+import katex from "katex";
 interface Problem { 
     title: string;
-    description: string;
-    enumerate: string[];
+    description: React.ReactElement[];
     difficulty: string;
 }
 
 export interface Problems {
     [key: string]: Problem;
 }
-let enumerate: string[] = [];
-
-const processLatex = (content: string): string => {
+function isValidKaTeX(line: string): boolean {
+  try {
+    katex.renderToString(line, { throwOnError: true });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+const processLatex = (content: string): React.ReactElement[] => {
+    let problemDescription: React.ReactElement[] = [];
     const lines = content.split('\n');
-    let enumerateFlag = false;
-    const processedLines = lines.map(line => {
-        if (!line.trim()) return line;
-        
-        if(line == "\\end{enumerate}"){
-            enumerateFlag = false;
-        }
-        else if(enumerateFlag){
-            enumerate.push(line.slice(line.search(/]/)+1))
-        }
-        else if(line == "\\begin{enumerate}"){
-            enumerateFlag = true;
-            return "\\begin{enumerate}";
-        }
-            const parts = line.split('$');
-            return parts.map((part, index) => {
-                // Even indices are outside math mode, odd indices are inside
-                return index % 2 === 0 ? part : `$${part}$`;
-            }).join('');
-    });
+    let excess: string = "";
+    for(let i = 0; i < lines.length; i++){
+        let processed: React.ReactElement = <></>;
 
-    return processedLines.join('\n');
+        if(lines[i].includes("begin{enumerate}")){
+            i++;
+            let processedChild: React.ReactElement[]= [];
+            while(!lines[i].includes("end{enumerate}")){
+                let itemName = lines[i].slice(lines[i].indexOf('[')+1, lines[i].indexOf(']'))
+                let itemTxt = lines[i].slice(lines[i].indexOf(']')+1) + excess;
+                while(!isValidKaTeX(String.raw`${itemName} ${itemTxt}`)){
+                    i++;
+                    itemTxt += lines[i].slice(0, Math.max(0, lines[i].indexOf("\\item")))
+                }
+                processedChild.push(<li><KaTeXRenderer expression={String.raw`${itemName} ${itemTxt}`}/></li>)
+                i++;
+            }
+            processed = (
+            <ul>
+                {processedChild.map((e) => {
+                    return e;
+                })}
+            </ul>
+            )
+        }
+        else{
+            processed = <KaTeXRenderer expression={String.raw`${lines[i]}`}/>;
+        }
+        problemDescription.push(processed);
+    }
+    return problemDescription;
 };
 
 export const useProblems = () => {
@@ -71,7 +87,6 @@ export const useProblems = () => {
                             parsedProblems[currentProblemName] = {
                                 title: currentProblemName,
                                 description: processLatex(curProblem.trim()),
-                                enumerate: enumerate,
                                 difficulty: "easy"
                             };
                         }
@@ -89,7 +104,6 @@ export const useProblems = () => {
                     parsedProblems[currentProblemName] = {
                         title: currentProblemName,
                         description: processLatex(curProblem.trim()),
-                        enumerate: enumerate,
                         difficulty: "easy"
                     };
                 }

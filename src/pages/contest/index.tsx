@@ -13,7 +13,9 @@ import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { useProblems } from "../../../texconverter";
-
+import katex from 'katex'
+import KaTeXRenderer from '@/components/KatexRenderer';
+import 'katex/dist/katex.min.css';
 const config = {
     loader: { load: ['[tex]/ams'] },
     tex: {
@@ -74,27 +76,17 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                     </TabsList>
                                 </div>
                                 <div className='col-span-7'>
-                                    {Object.entries(problems).map(([problemKey, {description, enumerate, difficulty}]) => (
+                                    {Object.entries(problems).map(([problemKey, {description, difficulty}]) => (
                                         <TabsContent key={problemKey} value={problemKey}>
                                             <h1 className='text-2xl font-semibold mb-2'>Problem {problemKey}</h1>
                                             <Card className='border-border'>
                                                 <CardContent className='text-lg/8 w-full max-w-full'>
                                                     <div style={{ whiteSpace: 'pre-wrap' }}>
-                                                        <MathJax hideUntilTypeset={'first'}>
-                                                            {description.includes("\\begin{enumerate}") ? (
-                                                                <>
-                                                                    {description.split("\\begin{enumerate}")[0]}
-                                                                    <ul>
-                                                                        {enumerate.map((item, index) => (
-                                                                            <li key={index}>{item}</li>
-                                                                        ))}
-                                                                    </ul>
-                                                                    {description.split("\\end{enumerate}")[1]}
-                                                                </>
-                                                            ) : (
-                                                                description
-                                                            )}
-                                                        </MathJax>
+                                                        <>
+                                                        {description.map((e)=> {
+                                                            return e;
+                                                        })}
+                                                        </>
                                                     </div>
                                                 </CardContent>
                                             </Card>

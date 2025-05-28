@@ -30,6 +30,7 @@
     "fs": "^0.0.1-security",
     "html-react-parser": "^5.2.5",
     "katex": "^0.16.22",
+    "latex.js": "^0.12.6",
     "lucide-react": "^0.507.0",
     "mathjax": "^3.2.2",
     "memfs": "^4.17.2",

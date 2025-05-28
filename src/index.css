@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Love+Ya+Like+A+Sister&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -107,4 +107,35 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Add these styles for latex.js content */
+.latex-content {
+  font-family: "Computer Modern", serif;
+  line-height: 1.5;
+}
+
+.latex-content .math {
+  font-family: "Computer Modern Math", serif;
+}
+
+.latex-content .math-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.latex-content .math-display {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+.latex-content .enumerate {
+  list-style-type: decimal;
+  padding-left: 2em;
+  margin: 1em 0;
+}
+
+.latex-content .enumerate li {
+  margin: 0.5em 0;
 }

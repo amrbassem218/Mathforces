@@ -50,7 +50,9 @@ export function Signup() {
           await signup(email, password).then(async(cred) => {
             await setDoc(doc(db, "users", cred.user.uid),{
               username: userName,
-              email: email
+              email: email,
+              ranking: "Beginner",
+              rating: 1000,
             })
             sendEmailVerification(cred.user).then(() => {
               setEmailVerificationSent(true);

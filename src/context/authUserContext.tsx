@@ -49,7 +49,10 @@ const AuthUserProvider: React.FunctionComponent<AuthUserProviderProps> = ({child
     const [loading, setLoading] = useState<boolean >(true);
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if(user){
+            if(user && !user.emailVerified){
+                signOut(auth);
+            }
+            else if(user){
                 setUser(user);
             }
             setLoading(false);

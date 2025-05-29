@@ -19,117 +19,84 @@ function isValidKaTeX(line: string): boolean {
     }
     return true;
 }
-function texFormatter(lines: string[]): string[] {
+export function texFormatter(input: string): string[] {
+  const lines = input.split(/\r?\n/);
   const result: string[] = [];
+
   let buffer: string[] = [];
-  let inDisplayMath = false;
-  let inMatrix = false;
-  let matrixBuffer: string[] = [];
+  let inBlock = false;
+  let blockStart = '';
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    
-    // Skip empty lines
-    if (!line) {
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
-        buffer = [];
+  const blockDelimiters: [string, string][] = [
+    ['\\[', '\\]'],
+    ['\\begin{equation}', '\\end{equation}'],
+    ['\\begin{equation*}', '\\end{equation*}'],
+    ['\\begin{align}', '\\end{align}'],
+    ['\\begin{align*}', '\\end{align*}'],
+    ['\\begin{gather}', '\\end{gather}'],
+    ['\\begin{gather*}', '\\end{gather*}']
+  ];
+
+  const isBlockStart = (line: string): string | null =>
+    blockDelimiters.find(([start]) => line.includes(start))?.[0] || null;
+
+  const getBlockEnd = (start: string): string =>
+    blockDelimiters.find(([s]) => s === start)?.[1] || '';
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!inBlock) {
+      const startDelim = isBlockStart(trimmed);
+      if (startDelim) {
+        inBlock = true;
+        blockStart = startDelim;
+        buffer.push(trimmed);
+        continue;
       }
-      continue;
-    }
 
-    // Handle display math mode
-    if (line.includes('\\[')) {
-      inDisplayMath = true;
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
-        buffer = [];
+      if (/\\\[(.*)\\\]/.test(trimmed) || /^\$.*\$$/.test(trimmed)) {
+        // Already complete inline/display math
+        result.push(trimmed);
+      } else if (/\\\[/.test(trimmed) || /^\$/.test(trimmed)) {
+        // Start of display/inline math block
+        inBlock = true;
+        blockStart = trimmed.startsWith('\\[') ? '\\[' : '$';
+        buffer.push(trimmed);
+      } else {
+        result.push(trimmed); // normal line
       }
-      buffer.push(line);
-      continue;
-    }
-    if (line.includes('\\]')) {
-      inDisplayMath = false;
-      buffer.push(line);
-      result.push(buffer.join(' ')); // Join display math with spaces
-      buffer = [];
-      continue;
-    }
-
-    // Handle matrix environment
-    if (line.includes('\\begin{bmatrix}')) {
-      inMatrix = true;
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
+    } else {
+      buffer.push(trimmed);
+      const blockEnd = getBlockEnd(blockStart);
+      if (blockEnd && trimmed.includes(blockEnd)) {
+        // Found closing
+        result.push(buffer.join(' ').replace(/\s+/g, ' ').trim());
         buffer = [];
-      }
-      matrixBuffer = [line];
-      continue;
-    }
-    if (line.includes('\\end{bmatrix}')) {
-      inMatrix = false;
-      matrixBuffer.push(line);
-      result.push(matrixBuffer.join(' ')); // Join matrix with spaces
-      matrixBuffer = [];
-      continue;
-    }
-
-    // If we're in a matrix, collect all lines
-    if (inMatrix) {
-      matrixBuffer.push(line);
-      continue;
-    }
-
-    // Handle enumerate environment
-    if (line.includes('\\begin{enumerate}') || line.includes('\\end{enumerate}')) {
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
+        inBlock = false;
+        blockStart = '';
+      } else if (blockStart === '\\[' && trimmed.includes('\\]')) {
+        result.push(buffer.join(' ').replace(/\s+/g, ' ').trim());
         buffer = [];
-      }
-      result.push(line);
-      continue;
-    }
-
-    // Handle item commands
-    if (line.includes('\\item')) {
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
+        inBlock = false;
+        blockStart = '';
+      } else if (blockStart === '$' && trimmed.includes('$')) {
+        result.push(buffer.join(' ').replace(/\s+/g, ' ').trim());
         buffer = [];
+        inBlock = false;
+        blockStart = '';
       }
-      result.push(line);
-      continue;
     }
-
-    // Handle inline math mode
-    if (line.includes('$')) {
-      if (buffer.length > 0) {
-        result.push(buffer.join('\n'));
-        buffer = [];
-      }
-      result.push(line);
-      continue;
-    }
-
-    // If we're in display math, keep buffering
-    if (inDisplayMath) {
-      buffer.push(line);
-      continue;
-    }
-
-    // Regular text
-    buffer.push(line);
   }
 
-  // Add any remaining buffered content
+  // Push any dangling buffer
   if (buffer.length > 0) {
-    result.push(buffer.join('\n'));
-  }
-  if (matrixBuffer.length > 0) {
-    result.push(matrixBuffer.join(' '));
+    result.push(buffer.join(' ').replace(/\s+/g, ' ').trim());
   }
 
-  return result;
+  return result.filter(line => line.length > 0);
 }
+
 
 const processLatex = (content: string): React.ReactElement[] => {
     let problemDescription: React.ReactElement[] = [];
@@ -173,13 +140,13 @@ export const useProblems = () => {
     useEffect(() => {
         const loadProblems = async () => {
             try {
-                const response = await fetch("/2023.tex");
+                const response = await fetch("/2024.tex");
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 let text = await response.text();
                 let lines = text.split('\n');
-                lines = texFormatter(lines);
+                lines = texFormatter(text);
                 const parsedProblems: Problems = {};
                 let flag = false;
                 let curProblem = "";

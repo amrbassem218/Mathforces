@@ -16,7 +16,6 @@ const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
     .replace(/\\rm/g, '\\mathrm')
     .replace(/\\bf/g, '\\mathbf')
     .replace(/\\it/g, '\\mathit')
-    .replace(/([^\\])\\over([^\\])/g, '$1\\frac{$1}{$2}')
     .replace(/\\choose/g, '\\binom');
     try {
       useEffect(()=>{
@@ -26,6 +25,7 @@ const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
             delimiters: [
               {left: "$$", right: "$$", display: true},
               {left: "$", right: "$", display: false},
+              {left: "``", right: "''", display: false},
               {left: "\\[", right: "\\]", display: true},
               {left: "\\(", right: "\\)", display: false}
             ]

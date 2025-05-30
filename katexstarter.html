@@ -22,9 +22,10 @@
         ]
       });
       let math = document.getElementById("math");
-      math.innerHTML = String.raw`\[
-  \sum_{k=0}^{3^{1010}-1} (-2)^{f(k)} (z+k)^{2023} = 0.
-  \]`;
+      math.innerHTML = String.raw`$$
+  \begin{align*} & \lim_{x \to 1^-} F_a(x) e^{-1/(1-x)} = 0 \qquad \text{for all }a < c\text{, and} \\ & \lim_{x \to 1^-} F_a(x) e^{-1/(1-x)} = \infty \qquad \text{for all }a > c\text{.} \end{align*}
+  $$`;
+  ''
       renderMathInElement(math,{
         delimiters: [
           {left: "$$", right: "$$", display: true},

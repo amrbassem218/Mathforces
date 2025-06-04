@@ -15,7 +15,10 @@ import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firesto
 
 interface IContestProps {
 }
-
+interface problemInputAnswer {
+    answer: string | null;
+    verdict: string | null;
+}
 const Contest: React.FunctionComponent<IContestProps> = (props) => {
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
@@ -23,12 +26,10 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
     const [contestData, setContestData] = useState<DocumentData | null>(null);
     const [problems, setProblems] = useState<DocumentData[] | null>(null);
     const [contestLoadError, setContestLoadError] = useState(false);
-    const [inputAnswer, setInputAnswer] = useState<Record<string,string>>({});
+    const [inputAnswer, setInputAnswer] = useState<Record<string,problemInputAnswer>>({});
     const CONTEST_ID = "111";
     const activeTab = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md"
-    const handleProblemSubmit = (problem: DocumentData) => {
-       console.log(inputAnswer[problem.name]); 
-    }
+    const activeProblem = "data-[state=active]:bg-primary data-[state=active]:text-lavender"
     useEffect(()=> {
         if(db){
             const getProblems = async() => {
@@ -61,7 +62,7 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
         }
     },[problems])
     
-    if(loading || !problems){
+    if(loading || !problems || !contestData){
         return <div>loading...</div>
     }
 
@@ -71,6 +72,28 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
     
     if(!user){
         navigate('/login');
+    }
+    const handleInputAnswerChange = (attr: string, value: string, problem: DocumentData) => {
+        setInputAnswer({...inputAnswer, [problem.name]: {...inputAnswer[problem.name], [attr]: value}});
+    }
+    const handleProblemSubmit = (problem: DocumentData) => {
+        if(contestData.ended){
+            if(problem.answer == Number(inputAnswer[problem.name].answer)){
+                handleInputAnswerChange("verdict", "true", problem);
+                console.log("true");
+            }
+            else{
+                handleInputAnswerChange("verdict", "false", problem);
+                console.log("false");
+            }
+        }
+        else{
+            handleInputAnswerChange("verdict", "in_contest", problem);
+            console.log("in_contest");
+        }
+    }
+    const verdict = (problem: DocumentData) => {  
+        return inputAnswer[problem.name]?.verdict;
     }
     return (
         <div className='flex flex-col h-screen'>
@@ -83,23 +106,25 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                     <TabsTrigger value="support" className={activeTab}>Support</TabsTrigger>
                 </TabsList>
                 <TabsContent value="problems" className='w-full'>
-                    <Tabs defaultValue="A" className="w-full">
+                    <Tabs defaultValue={problems[0].name} className="w-full">
                         <div className='grid grid-cols-12'>
-                            <div className='col-span-1 border-2 border-black'>
+                            <div className='col-span-1 '>
                                 <TabsList className='flex flex-col gap-2 '>
-                                    {problems.map((problem) => {
-                                        console.log("hey it'sme");
-                                        return (
-                                        <TabsTrigger key={problem.name} value={problem.name}>
+                                    {problems.map((problem) =>( 
+                                        <TabsTrigger key={problem.name} value={problem.name} className={`${activeProblem} rounded-full w-12 h-12 border-border border-1 font-bold text-text/55
+                                        ${verdict(problem) == "true" ? "bg-green-300" :
+                                            verdict(problem) == "false" ? "bg-red-300" : ""}
+                                        `}>
                                             {problem.name}
                                         </TabsTrigger>
-                                    )})}
+                                    ))}
                                 </TabsList>
                             </div>
                             <div className='col-span-7'>
                                 {problems.map((problem) =>(
                                     <TabsContent key={problem.name} value={problem.name}>
                                         <h1 className='text-2xl font-semibold mb-2'>Problem {problem.name}</h1>
+                                        <div className='flex flex-col gap-15'>
                                         <Card className='border-border'>
                                             <CardContent className='text-lg/8 w-full max-w-full'>
                                                 <div style={{ whiteSpace: 'pre-wrap' }}>
@@ -110,11 +135,29 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                                     </>
                                                 </div>
                                                 <form onSubmit={(e) => {e.preventDefault();return handleProblemSubmit(problem)}} className='flex items-center gap-2 m-3 mt-7'>
-                                                    <Input type="text" placeholder='Enter Your Answer' value={inputAnswer[problem.name]} className="w-96" onChange={(e) => setInputAnswer({...inputAnswer, [problem.name]: e.target.value})}/>
-                                                    <Button type="submit" className='col-span-2'>Submit</Button>
+                                                    <Input type="text" placeholder='Enter Your Answer' value={inputAnswer[problem.name]?.answer || ""} className="w-96" onChange={(e) => handleInputAnswerChange("answer", e.target.value, problem)}/>
+                                                    <Button type="submit" className={`col-span-2 `}>Submit</Button>
                                                 </form>
                                             </CardContent>
                                         </Card>
+                                        {verdict(problem) == "true" ?
+                                        <Card className='border-green-400'>
+                                            <CardTitle className='font-bold text-green-600 text-2xl'>Correct Answer</CardTitle>
+                                            <CardContent>
+                                            <h2>Explanation:</h2>
+                                            <p>{problem.editorial}</p>
+                                            </CardContent>
+                                        </Card>
+                                        : verdict(problem) == "false" ? 
+                                        <Card className='border-red-400'>
+                                            <CardTitle className='font-bold text-red-600 text-2xl'>Correct Answer</CardTitle>
+                                            <CardContent>
+                                            <h2 className=''>Try once more</h2>
+                                            <p>or see the editorial</p>
+                                            </CardContent>
+                                        </Card>
+                                        : ""}
+                                        </div>
                                     </TabsContent>
                                 ))}
                             </div>

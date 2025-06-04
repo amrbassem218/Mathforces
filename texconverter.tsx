@@ -23,7 +23,6 @@ const processLatex = (content: string): React.ReactElement[] => {
             i++;
             let processedChild: React.ReactElement[]= [];
             while(i < lines.length && !lines[i].includes("end{enumerate}")){
-              // console.log("waiting");
                 if(lines[i].includes("\\item")){
                     let itemName = lines[i].slice(lines[i].indexOf('[')+1, lines[i].indexOf(']'))
                     let itemTxt = lines[i].slice(lines[i].indexOf(']')+1);
@@ -47,14 +46,10 @@ const processLatex = (content: string): React.ReactElement[] => {
             }
             if(e.includes("\\end{align")){
               return e + "$$";
-              // e = e.slice(0, e.indexOf("\\end{align")) + "$$" + e.slice(e.indexOf("")) ;
             }
             return e;
           })
           lines[i] = lineWords.join(" ");
-          console.log("its me luigi")
-          console.log(lines[i]);
-          // lines[i] = lines[i].slice(0, lines[i].indexOf("begin{align")) + "$$" + lines.slice(lines[i].indexOf("begin{align"), lines[i].indexOf("end{align")+1) + "$$" + (lines.slice(Math.max(lines[i].indexOf("end{align*}$$")+1, lines.indexOf(""))));
           processed = (<><KaTeXRenderer expression={String.raw`${lines[i]}`}/><br/></>);
         }
         else if(lines[i].includes("\\end")){
@@ -87,10 +82,8 @@ export const useProblems = () => {
                 let currentProblemName = "";
                 for (let ln of lines) {
                     if(ln.includes("end{itemize")) break;
-                    // console.log(curProblem);
                     if (ln.slice(0, 6) === "\\item[" && ln[8] === "]") {
                         if (currentProblemName && curProblem) {
-                          console.log(curProblem);
                             parsedProblems[currentProblemName] = {
                                 title: currentProblemName,
                                 description: processLatex(curProblem.trim()),
@@ -107,7 +100,6 @@ export const useProblems = () => {
                       }
                 }
 
-                // Handle the last problem
                 if (currentProblemName && curProblem) {
                     parsedProblems[currentProblemName] = {
                         title: currentProblemName,

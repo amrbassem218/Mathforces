@@ -165,26 +165,19 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                         </div>
                     </Tabs>
                 </TabsContent>
-                <TabsContent value="standing" className='w-2xl'>
-                    <Card>
+                <TabsContent value="standing" className='w-full'>
+                    <Card className=''>
                         <CardHeader>
-                            <CardTitle>Password</CardTitle>
+                            <CardTitle>Standing</CardTitle>
                             <CardDescription>
-                                Change your password here. After saving, you'll be logged out.
+                                Standing includes trusted participants at the time of contest.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            <div className="space-y-1">
-                                <Label htmlFor="current">Current password</Label>
-                                <Input id="current" type="password" />
-                            </div>
-                            <div className="space-y-1">
-                                <Label htmlFor="new">New password</Label>
-                                <Input id="new" type="password" />
-                            </div>
+                            <p>Nobody at contest</p>
                         </CardContent>
                         <CardFooter>
-                            <Button>Save password</Button>
+                            {/* <Button>Save password</Button> */}
                         </CardFooter>
                     </Card>
                 </TabsContent>

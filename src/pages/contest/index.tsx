@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../../firebaseConfig';
 import Header from '@/components/ui/Header';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@radix-ui/react-label';
@@ -12,6 +12,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useProblems } from "../../../texconverter";
 import 'katex/dist/katex.min.css';
 import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firestore';
+import Error from '../error';
 
 interface IContestProps {
 }
@@ -22,40 +23,60 @@ interface problemInputAnswer {
 const Contest: React.FunctionComponent<IContestProps> = (props) => {
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
-    // const { problems, loading: problemsLoading, error: problemsError } = useProblems();
+    const {id} = useParams<{id: string}>();
     const [contestData, setContestData] = useState<DocumentData | null>(null);
     const [problems, setProblems] = useState<DocumentData[] | null>(null);
     const [contestLoadError, setContestLoadError] = useState(false);
     const [inputAnswer, setInputAnswer] = useState<Record<string,problemInputAnswer>>({});
-    const CONTEST_ID = "111";
+    const [contestId, setContestId] = useState<string>("");
     const activeTab = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md"
     const activeProblem = "data-[state=active]:bg-primary data-[state=active]:text-lavender"
+    useEffect(() => {
+    }, [id])
     useEffect(()=> {
-        if(db){
-            const getProblems = async() => {
-                const contestRef = doc(db, "contests", CONTEST_ID);
-                const contestSnap = await getDoc(contestRef);
-                if(contestSnap.exists()){
-                    setContestData(contestSnap.data());
-                    const problemsSnap = await getDocs(collection(contestRef, "problems"));
-                    let arr: DocumentData[] = [];
-                    problemsSnap.forEach((doc) => {
-                        arr.push(doc.data());
-                        setInputAnswer({...inputAnswer, [doc.data().name]: ""});
-                        console.log("data");
-                        console.log(doc.data());
-                        // console.log("data: ", doc.data());
+        if(db && id){
+            if(!contestId){
+                const getContest = async() => {
+                    const contestsSnap = await getDocs(collection(db, "contests"));
+                    contestsSnap.forEach((contest) => {
+                        const contestData = contest.data();
+                        if(contestData.id == id){
+                            setContestId(id);
+                        }
                     })
-                    setProblems(arr);
                 }
-                else{
-                    console.log("Can't Find Contest");
-                    setContestLoadError(true);
-                }
+                getContest();
             }
-            getProblems();
+            else{
+                const getProblems = async() => {
+                    if(!contestId){
+                        console.log("whateve")
+                        setContestLoadError(true);
+                        return;
+                    }
+                    const contestRef = doc(db, "contests", contestId);
+                    const contestSnap = await getDoc(contestRef);
+                    if(contestSnap.exists()){
+                        setContestData(contestSnap.data());
+                        const problemsSnap = await getDocs(collection(contestRef, "problems"));
+                        let arr: DocumentData[] = [];
+                        problemsSnap.forEach((doc) => {
+                            arr.push(doc.data());
+                            setInputAnswer({...inputAnswer, [doc.data().name]: ""});
+                            console.log("data");
+                            console.log(doc.data());
+                        })
+                        setProblems(arr);
+                    }
+                    else{
+                        console.log("Can't Find Contest");
+                        setContestLoadError(true);
+                    }
+                }
+                getProblems();
+            }
         }
-    }, [db])
+    }, [contestId, db, id])
     useEffect(() => {
         if(problems){
             console.log(problems.length);
@@ -65,9 +86,8 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
     if(loading || !problems || !contestData){
         return <div>loading...</div>
     }
-
-    if(contestLoadError) {
-        return <div>Error loading Contest</div>
+    if(contestLoadError ) {
+        return <Error/>
     }
     
     if(!user){
@@ -150,7 +170,7 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                         </Card>
                                         : verdict(problem) == "false" ? 
                                         <Card className='border-red-400'>
-                                            <CardTitle className='font-bold text-red-600 text-2xl'>Correct Answer</CardTitle>
+                                            <CardTitle className='font-bold text-red-600 text-2xl'>Wrong Answer</CardTitle>
                                             <CardContent>
                                             <h2 className=''>Try once more</h2>
                                             <p>or see the editorial</p>

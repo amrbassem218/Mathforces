@@ -5,6 +5,7 @@ import Login from "./pages/login";
 import SignUp from "./pages/signup";
 import ProtectedRoutes from "./components/ui/protectedroutes";
 import Contest from "./pages/contest";
+import Contests from "./pages/contests";
 
 export const router = createBrowserRouter([
     {
@@ -13,11 +14,6 @@ export const router = createBrowserRouter([
             {
                 element: <Home/>,
                 path: "/",
-                errorElement: <Error/>
-            },
-            {
-                element: <Contest/>,
-                path: "/testcontest",
                 errorElement: <Error/>
             },
         ]
@@ -30,6 +26,16 @@ export const router = createBrowserRouter([
     {
         element: <SignUp/>,
         path: "/signup",
+        errorElement: <Error/>
+    },
+    {
+        element: <Contests/>,
+        path: "/contests",
+        errorElement: <Error/>
+    },
+    {
+        element: <Contest/>,
+        path: "contest/:id",
         errorElement: <Error/>
     },
 ])

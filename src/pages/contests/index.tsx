@@ -19,26 +19,19 @@ const Contests: React.FunctionComponent<IContestsProps> = (props) => {
   useEffect(() => {
     const getContests = async() => {
       const contestSnap = await getDocs(collection(db, "contests"))
+      let pastContestTemp: DocumentData[] = [];
+      let upcomingContestTemp: DocumentData[] = [];
       contestSnap.forEach((contest) => {
         const contestData = contest.data();
         if(contestData.ended == true){
-          if(pastContests){
-            setPastContests([...pastContests, contestData]);
-          }
-          else{
-            setPastContests([contestData]);
-          } 
+          pastContestTemp.push(contestData);
         }
         else{
-          if(upcomingContests){
-            setUpcomingContests([...upcomingContests, contestData]);
-          }
-          else{
-            setUpcomingContests([contestData]);
-          }
-
+          upcomingContestTemp.push(contestData);
         }
       })
+      setPastContests(pastContestTemp);
+      setUpcomingContests(upcomingContestTemp);
     }
     if(user){
       const getRegisteredContests = async() => {

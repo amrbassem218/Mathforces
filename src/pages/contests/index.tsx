@@ -75,6 +75,14 @@ const Contests: React.FunctionComponent<IContestsProps> = (props) => {
       navigate('/login')
     }
   }
+  const handleCreateContest = () => {
+    if(user){
+      navigate('/create-contest');
+    }
+    else{
+      navigate('/login');
+    }
+  }
   if(loading){
     return <div>loading...</div>
   }
@@ -83,7 +91,10 @@ const Contests: React.FunctionComponent<IContestsProps> = (props) => {
         <Header login={"full"} signup={"outline"}/>
         <div className='grid grid-cols-12'>
           <div className='col-span-8'>
-            <h1>Live & Upcoming Contests</h1>
+            <div className='flex'>
+              <h1>Live & Upcoming Contests</h1>
+              <Button className='' onClick={handleCreateContest}>Create Your own</Button>
+            </div>
             <Card className='border-border'>
               {upcomingContests && upcomingContests.map((contest) => (
                 <Card className='border-border' key={contest.id}>

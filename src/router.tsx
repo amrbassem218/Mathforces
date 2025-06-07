@@ -6,17 +6,23 @@ import SignUp from "./pages/signup";
 import ProtectedRoutes from "./components/ui/protectedroutes";
 import Contest from "./pages/contest";
 import Contests from "./pages/contests";
+import CreateContest from "./pages/create-contest";
 
 export const router = createBrowserRouter([
     {
         element: <ProtectedRoutes/>,
         children:[
             {
-                element: <Home/>,
-                path: "/",
+                element: <CreateContest/>,
+                path: "/create-contest",
                 errorElement: <Error/>
             },
         ]
+    },
+    {
+        element: <Home/>,
+        path: "/",
+        errorElement: <Error/>
     },
     {
         element: <Login/>,

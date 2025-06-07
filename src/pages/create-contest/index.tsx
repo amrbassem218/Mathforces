@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Header from '@/components/ui/Header';
-import { collection, doc, DocumentData, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebaseConfig';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
@@ -32,7 +32,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DateAndTimePicker } from '@/components/ui/dateAndTmePicker';
 import { Label } from '@/components/ui/label';
-import { Schema, z } from 'zod';
+import { z } from 'zod';
+import { toast, Toaster } from 'sonner';
 interface ICreateContestProps {
     
 }
@@ -78,13 +79,17 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         contestsSnap.forEach((contest) => {
             const contestData = contest.data();
             if(contestData.id){
-                console.log("it's me");
                 console.log(Number(contestData.id)+1);
                 console.log(Number(Number(contestId)));
                 contestId = Math.max(Number(contestData.id)+1, Number(contestId)).toString();
             }
         })
     }
+    const contestDateString = data.contestDate.toLocaleDateString('en-US', {
+        weekday: "long",
+        month: "long",
+        day: "2-digit"
+    })
     const createContest = async() => {
         const now = new Date();
         const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000)
@@ -98,8 +103,28 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
             length: data.contestLength,
         })
     }
+    const undoContestCreation = async() => {
+        const subCollections = ["problems"];
+        subCollections.forEach(async(col) => {
+            const subDocs = await getDocs(collection(db, "contests", contestId, col));
+            subDocs.forEach((doc) => {
+                deleteDoc(doc.ref);
+            })
+        })
+        await deleteDoc(doc(db, "contests", contestId))
+    }   
     getId().then(() => {
-        createContest();
+        navigate('/contests')
+        createContest().then(() => { 
+            console.log("contest has been created");
+            toast("Contest has been created", {
+                description: contestDateString,
+                action: {
+                    label: "Undo",
+                    onClick: (() => undoContestCreation()),
+                },
+            })
+        })
     })
   }
   const difficulty = form.watch("contestDifficulty");

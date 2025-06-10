@@ -149,9 +149,9 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                             <CardContent className='text-lg/8 w-full max-w-full'>
                                                 <div style={{ whiteSpace: 'pre-wrap' }}>
                                                     <>
-                                                    {problem.problemStatement.map((e: string)=> {
-                                                        return e;
-                                                    })}
+                                                    {problem.description.map((e: string)=> (
+                                                        <div dangerouslySetInnerHTML={{__html: e}}></div>
+                                                    ))}
                                                     </>
                                                 </div>
                                                 <form onSubmit={(e) => {e.preventDefault();return handleProblemSubmit(problem)}} className='flex items-center gap-2 m-3 mt-7'>

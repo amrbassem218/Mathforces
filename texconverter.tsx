@@ -1,20 +1,12 @@
 import KaTeXRenderer from "@/components/KatexRenderer";
 import { string } from "prop-types";
-import { useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import katex from "katex";
 import { lstat } from "fs";
-interface Problem { 
-    title: string;
-    description: React.ReactElement[];
-    difficulty: string;
-}
-
-export interface Problems {
-    [key: string]: Problem;
-}
-
-const processLatex = (content: string): React.ReactElement[] => {
-    let problemDescription: React.ReactElement[] = [];
+import {Problems, Problem} from "types"
+import {renderToString} from "react-dom/server"
+const processLatex = (content: string): string[] => {
+    let problemDescription: string[] = [];
     const lines = content.split('\n');
     for(let i = 0; i < lines.length; i++){
         let processed: React.ReactElement = <></>;
@@ -55,27 +47,24 @@ const processLatex = (content: string): React.ReactElement[] => {
         else if(lines[i].includes("\\end")){
           processed = (<><KaTeXRenderer expression={String.raw`${lines[i].slice(0,)}`}/></>);
         }
+        
         else{
             processed = (<><KaTeXRenderer expression={String.raw`${lines[i]}`}/></>);
         }
-        problemDescription.push(processed);
+        problemDescription.push(renderToString(processed));
     }
     return problemDescription;
 };
-
-export const useProblems = () => {
+interface IuseProblemsProps {
+    formattedTex: string;
+}
+export const useProblems = ({formattedTex}: IuseProblemsProps)=> {
     const [problems, setProblems] = useState<Problems>({});
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
         const loadProblems = async () => {
             try {
-                const response = await fetch("/2018.tex");
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                let text = await response.text();
-                let lines = text.split('\n');
+                let lines = formattedTex.split('\n');
                 const parsedProblems: Problems = {};
                 let flag = false;
                 let curProblem = "";
@@ -85,7 +74,7 @@ export const useProblems = () => {
                     if (ln.slice(0, 6) === "\\item[" && ln[8] === "]") {
                         if (currentProblemName && curProblem) {
                             parsedProblems[currentProblemName] = {
-                                title: currentProblemName,
+                                name: currentProblemName,
                                 description: processLatex(curProblem.trim()),
                                 difficulty: "easy"
                             };
@@ -95,30 +84,27 @@ export const useProblems = () => {
                         curProblem = ln.slice(ln.indexOf(']')+1) + "\n"
                         flag = true;
                       }
-                      else if(true){
+                      else if(flag){
                         curProblem += ln + "\n";
                       }
                 }
-
                 if (currentProblemName && curProblem) {
                     parsedProblems[currentProblemName] = {
-                        title: currentProblemName,
+                        name: currentProblemName,
                         description: processLatex(curProblem.trim()),
                         difficulty: "easy"
                     };
                 }
 
                 setProblems(parsedProblems);
-                setLoading(false);
             } catch (err) {
                 console.error('Error loading problems:', err);
                 setError(err instanceof Error ? err.message : 'Unknown error occurred');
-                setLoading(false);
             }
         };
 
         loadProblems();
-    }, []);
+    }, [formattedTex]);
 
-    return { problems, loading, error };
+    return { problems, error };
 };

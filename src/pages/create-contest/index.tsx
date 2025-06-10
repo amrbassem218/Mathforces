@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Header from '@/components/ui/Header';
-import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../../firebaseConfig';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
@@ -34,6 +34,9 @@ import { DateAndTimePicker } from '@/components/ui/dateAndTmePicker';
 import { Label } from '@/components/ui/label';
 import { z } from 'zod';
 import { toast, Toaster } from 'sonner';
+import { useProblems } from '../../../texconverter';
+import { Problem, Problems } from 'types';
+import {formatTex} from "../../../texFormatter"
 interface ICreateContestProps {
     
 }
@@ -52,7 +55,11 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
   const [contestDifficulty, setContestDifficulty] = useState("");
   const [user, loading] = useAuthState(auth);
   const [dateAndTime, setDateAndTime] = useState<{date: Date | undefined; time:string | undefined;}>({date: undefined, time: ""});
+  const [formattedContestTex, setFormattedContestTex] = useState("");
+  const [isCreatingContest, setIsCreatingContest] = useState(false);
+  const {problems, error} = useProblems({formattedTex: formattedContestTex});
   const navigate = useNavigate();
+  const [contestId, setContestId] = useState("111");
   //schema
   const form = useForm<zodSchema>({
     resolver: zodResolver(schema),
@@ -72,38 +79,63 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
     college: ["Putnam", "Project Euler", "Proof-based"],
   }
   
-  let contestId = "111";
+  useEffect(() => {
+      if(problems){
+            console.log("problem1: ", Object.values(problems)[0]);
+            console.log(formattedContestTex);
+            const createProblems = async() => {
+                for(let problem of Object.values(problems)){
+                    await setDoc(doc(db, "contests", contestId, "problems", problem.name), {
+                        name: problem.name,
+                        description: problem.description,
+                        difficulty: problem.difficulty
+                    });
+                    console.log("one of the problems: ", problem.name);
+                    console.log(contestId);
+                }
+            }
+            createProblems();
+        }
+    }, [formattedContestTex, problems, contestId, isCreatingContest])
   const handleCreateContestSubmit = (data: zodSchema) => {
     const getId = async() => {
         const contestsSnap = await getDocs(collection(db, "contests"));
+        let curContestId = "111";
         contestsSnap.forEach((contest) => {
             const contestData = contest.data();
             if(contestData.id){
                 console.log(Number(contestData.id)+1);
-                console.log(Number(Number(contestId)));
-                contestId = Math.max(Number(contestData.id)+1, Number(contestId)).toString();
+                console.log(Number(Number(curContestId)));
+                curContestId = Math.max(Number(contestData.id)+1, Number(curContestId)).toString();
             }
         })
+        setContestId(curContestId);
+        return curContestId;
     }
     const contestDateString = data.contestDate.toLocaleDateString('en-US', {
         weekday: "long",
         month: "long",
         day: "2-digit"
     })
-    const createContest = async() => {
+    const createContest = async(contestId: string) => {
         const now = new Date();
         const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000)
         const contestDateAndTimeEnd = new Date(contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000)
+        
+        let formattedTex = formatTex(data.contestTex)
+        console.log("formatted: ", formattedTex);
+        setFormattedContestTex(formattedTex);
         const newContest = await setDoc(doc(db, "contests", contestId), {
             name: data.contestName,
             id: contestId,
-            contestTex: data.contestTex,
+            contestTex: formattedTex,
             date: contestDateAndTime, 
             ended: now > contestDateAndTimeEnd,
             length: data.contestLength,
         })
+        setIsCreatingContest(true);
     }
-    const undoContestCreation = async() => {
+    const undoContestCreation = async(contestId: string) => {
         const subCollections = ["problems"];
         subCollections.forEach(async(col) => {
             const subDocs = await getDocs(collection(db, "contests", contestId, col));
@@ -113,15 +145,15 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         })
         await deleteDoc(doc(db, "contests", contestId))
     }   
-    getId().then(() => {
+    getId().then((id) => {
         navigate('/contests')
-        createContest().then(() => { 
+        createContest(id).then(() => { 
             console.log("contest has been created");
             toast("Contest has been created", {
                 description: contestDateString,
                 action: {
                     label: "Undo",
-                    onClick: (() => undoContestCreation()),
+                    onClick: (() => undoContestCreation(id)),
                 },
             })
         })

@@ -9,7 +9,7 @@ interface KaTeXRendererProps {
   displayMode?: boolean;
 }
 
-const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
+export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
   let element = useRef<HTMLDivElement>(null);
   expression = expression
     .replace(/\\mbox/g, '\\text')

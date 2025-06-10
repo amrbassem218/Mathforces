@@ -1,10 +1,9 @@
-import KaTeXRenderer from "@/components/KatexRenderer";
-import { string } from "prop-types";
+import KaTeXRenderer from "./src/components/KatexRenderer";
 import { ReactElement, useEffect, useState } from "react";
 import katex from "katex";
 import { lstat } from "fs";
-import {Problems, Problem} from "types"
-import {renderToString} from "react-dom/server"
+import { Problem, Problems } from "./types";
+import {renderToString} from "react-dom/server";
 const processLatex = (content: string): string[] => {
     let problemDescription: string[] = [];
     const lines = content.split('\n');
@@ -47,7 +46,6 @@ const processLatex = (content: string): string[] => {
         else if(lines[i].includes("\\end")){
           processed = (<><KaTeXRenderer expression={String.raw`${lines[i].slice(0,)}`}/></>);
         }
-        
         else{
             processed = (<><KaTeXRenderer expression={String.raw`${lines[i]}`}/></>);
         }

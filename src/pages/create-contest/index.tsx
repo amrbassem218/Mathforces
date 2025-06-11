@@ -1,6 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { DateAndTimePicker } from '@/components/ui/dateAndTmePicker';
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
     Form,
     FormControl,
     FormField,
@@ -17,6 +26,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useForm } from 'react-hook-form';
+import { FaCaretDown } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -26,16 +36,17 @@ import { formatTex } from "../../../texFormatter";
 
 const schema = z.object({
   contestName: z.string().min(10).max(90),
-  contestTex: z.string().min(100),
+  contestTex: z.string().min(100), // Should add a live Tex editor and validator here 
   contestLength: z.number().min(0.1),
   contestDifficulty: z.string(),
   contestTime: z.string().min(1, "Set Contest Time"),
   contestDate: z.date({required_error: "Date is required"}),
-});
+})
+
 type zodSchema = z.infer<typeof schema>;
 
 const CreateContest: React.FunctionComponent = () => {
-  const [loading] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [formattedContestTex, setFormattedContestTex] = useState("");
   const [isCreatingContest, setIsCreatingContest] = useState(false);
   const {problems} = useProblems({formattedTex: formattedContestTex});
@@ -57,6 +68,13 @@ const CreateContest: React.FunctionComponent = () => {
     }
   });
 
+  const contestDifficultyTypes = {
+    div: ["Div.1", "Div.2", "Div.3", "Div.4"],
+    standardized: ["ACT","SAT","GRE", "AP Calc AB", "AMC 8", "AMC 10", "AMC 12", "AIME"],
+    olympiad: ["Junior Olympiad", "National Olympiad", "International Olympiad"],
+    college: ["Putnam", "Project Euler", "Proof-based"],
+  }
+
   useEffect(() => {
     if (Object.keys(problems).length > 0 && !createdAnswerFields) {
         const answers: Record<string, string> = {};
@@ -66,27 +84,27 @@ const CreateContest: React.FunctionComponent = () => {
         setAnswers(answers);
         setCreatedAnswerFields(true);
     }
-  }, [problems, createdAnswerFields]);
+  },[problems])  
 
   useEffect(() => {
-    if(problems && isCreatingContest) {
-        const createProblems = async() => {
-            for(const problem of Object.values(problems)) {
-                await setDoc(doc(db, "contests", contestId, "problems", problem.name), {
-                    name: problem.name,
-                    description: problem.description,
-                    difficulty: problem.difficulty,
-                    answer: answers[problem.name]
-                });
+      if(problems && isCreatingContest){
+            const createProblems = async() => {
+                for(const problem of Object.values(problems)){
+                    await setDoc(doc(db, "contests", contestId, "problems", problem.name), {
+                        name: problem.name,
+                        description: problem.description,
+                        difficulty: problem.difficulty,
+                        answer: answers[problem.name]
+                    });
+                }
             }
-        };
-        createProblems();
-    }
-  }, [answers, formattedContestTex, problems, contestId, isCreatingContest]);
+            createProblems();
+        }
+    }, [answers, formattedContestTex, problems, contestId, isCreatingContest])
 
-  useEffect(() => {
-    setFormattedContestTex(formatTex(texInput));
-  }, [texInput]);
+    useEffect(() => {
+        setFormattedContestTex(formatTex(texInput));
+    }, [texInput]);
 
   const handleCreateContestSubmit = (data: zodSchema) => {
     const missingAnswers = Object.keys(problems).filter(problemName => !answers[problemName]);
@@ -96,9 +114,9 @@ const CreateContest: React.FunctionComponent = () => {
         });
         return;
     }
-    if(Object.keys(answers).length === 0) {
+    if(Object.keys(answers).length == 0){
         toast.error("Invalid Tex Format", {
-            description: "Please Follow the guidelines here"
+            description: `Please Follow the guidelines here`
         });
         return;
     } 
@@ -108,26 +126,26 @@ const CreateContest: React.FunctionComponent = () => {
         let curContestId = "111";
         contestsSnap.forEach((contest) => {
             const contestData = contest.data();
-            if(contestData.id) {
+            if(contestData.id){
                 curContestId = Math.max(Number(contestData.id)+1, Number(curContestId)).toString();
             }
-        });
+        })
         setContestId(curContestId);
         return curContestId;
-    };
+    }
 
     const contestDateString = data.contestDate.toLocaleDateString('en-US', {
         weekday: "long",
         month: "long",
         day: "2-digit"
-    });
+    })
 
     const createContest = async(contestId: string) => {
         const now = new Date();
-        const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000);
-        const contestDateAndTimeEnd = new Date(contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000);
+        const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000)
+        const contestDateAndTimeEnd = new Date(contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000)
         
-        const formattedTex = formatTex(data.contestTex);
+        const formattedTex = formatTex(data.contestTex)
         setFormattedContestTex(formattedTex);
         setIsCreatingContest(true);
         await setDoc(doc(db, "contests", contestId), {
@@ -137,8 +155,8 @@ const CreateContest: React.FunctionComponent = () => {
             date: contestDateAndTime, 
             ended: now > contestDateAndTimeEnd,
             length: data.contestLength,
-        });
-    };
+        })
+    }
 
     const undoContestCreation = async(contestId: string) => {
         const subCollections = ["problems"];
@@ -146,13 +164,13 @@ const CreateContest: React.FunctionComponent = () => {
             const subDocs = await getDocs(collection(db, "contests", contestId, col));
             subDocs.forEach((doc) => {
                 deleteDoc(doc.ref);
-            });
-        });
-        await deleteDoc(doc(db, "contests", contestId));
-    };   
+            })
+        })
+        await deleteDoc(doc(db, "contests", contestId))
+    }   
 
     getId().then((id) => {
-        navigate('/contests');
+        navigate('/contests')
         createContest(id).then(() => { 
             toast("Contest has been created", {
                 description: contestDateString,
@@ -160,13 +178,16 @@ const CreateContest: React.FunctionComponent = () => {
                     label: "Undo",
                     onClick: (() => undoContestCreation(id)),
                 },
-            });
-        });
-    });
-  };
+            })
+        })
+    })
+  }
 
-  if(loading) {
-    return <div>loading...</div>;
+  const difficulty = form.watch("contestDifficulty");
+  const length = form.watch("contestLength");
+
+  if(loading){
+    return <div>loading...</div>
   }
 
   return (
@@ -202,45 +223,80 @@ const CreateContest: React.FunctionComponent = () => {
                         </FormItem>
                     )}
                     />
-                    {Object.keys(problems).length > 0 && (
-                        <>
-                            <h1>Answers: </h1>
-                            {Object.keys(problems).map((e, i) => (
-                                <FormItem key={i}>
-                                    <FormLabel>{e}</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                            type="number" 
-                                            placeholder={`${e} answer`} 
-                                            value={answers[e as keyof typeof answers]}
-                                            onChange={(event) => {
-                                                const value = event.target.value;
-                                                setAnswers(prev => ({
-                                                    ...prev,
-                                                    [e as keyof typeof answers]: value
-                                                }));
-                                            }}
-                                            required
-                                        />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            ))}
-                        </>
-                    )}
+                    {Object.keys(problems).length > 0 && <h1>Answers: </h1> && Object.keys(problems).map((e, i) => (
+                        <FormItem key={i}>
+                            <FormLabel>{e}</FormLabel>
+                            <FormControl>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`${e} answer`} 
+                                    value={answers[e as keyof typeof answers]}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        setAnswers(prev => ({
+                                            ...prev,
+                                            [e as keyof typeof answers]: value
+                                        }));
+                                    }}
+                                    required
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    ))}
                     <DateAndTimePicker onChange={({date, time}) => {
-                        if(date instanceof Date) {
+                        if(date instanceof Date){
                             form.setValue("contestDate", date);
                         }
-                        if(time) {
+                        if(typeof time === "string"){
                             form.setValue("contestTime", time);
                         }
                     }}/>
-                    <Button type="submit">Create Contest</Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant={"outline"}>{difficulty ? difficulty : "Select Difficulty"} <FaCaretDown /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='w-40' align='start'>
+                            <DropdownMenuLabel>Contest Level</DropdownMenuLabel>
+                            {Object.values(contestDifficultyTypes).map((contestType, i) => {
+                                return (
+                                <div key={i}>
+                                <DropdownMenuGroup>
+                                    {contestType.map((contest, i) => (
+                                        <DropdownMenuItem key={i} onClick={() => form.setValue("contestDifficulty", contest)}>{contest}</DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuGroup>
+                                {i+1 < contestType.length && <DropdownMenuSeparator/>}
+                                </div>
+                            )})}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <FormField
+                    control={form.control}
+                    name='contestLength'
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Contest Length</FormLabel>
+                            <FormControl>
+                                <div className="flex flex-col gap-3">
+                                    <Input
+                                    type="number"
+                                    id="length"
+                                    min="0"
+                                    step="0.5"
+                                    placeholder="e.g. 2"
+                                    {...field}
+                                    className="w-24"
+                                    />
+                                </div>
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                    />
+                    <Button type='submit'>Submit</Button>
                 </form>
             </Form>
-          </div>
-          <div className='col-span-4'>
           </div>
         </div>
     </div>

@@ -1,6 +1,9 @@
 import * as React from 'react';
 
-const Error: React.FunctionComponent = () => {
+interface IErrorProps {
+}
+
+const Error: React.FunctionComponent<IErrorProps> = (props) => {
   return (<div>404 Math not found</div>);
 };
 

@@ -32,7 +32,6 @@ const schema = z.object({
   contestTime: z.string().min(1, "Set Contest Time"),
   contestDate: z.date({required_error: "Date is required"}),
 });
-
 type zodSchema = z.infer<typeof schema>;
 
 const CreateContest: React.FunctionComponent = () => {

@@ -36,7 +36,7 @@ const schema = z.object({
 type zodSchema = z.infer<typeof schema>;
 
 const CreateContest: React.FunctionComponent = () => {
-  const [user, loading] = useAuthState(auth);
+  const [loading] = useAuthState(auth);
   const [formattedContestTex, setFormattedContestTex] = useState("");
   const [isCreatingContest, setIsCreatingContest] = useState(false);
   const {problems} = useProblems({formattedTex: formattedContestTex});

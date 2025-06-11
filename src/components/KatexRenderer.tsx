@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css';
+import { lineDescription, IrenderComponent } from 'types';
 // import 
 interface KaTeXRendererProps {
   expression: string;
@@ -37,5 +38,30 @@ export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
     return <span>Couldn't render Problem</span>;
   }
 };
-
+export const renderComponent = ({lineDescription, key}: IrenderComponent):React.ReactElement => {
+  switch (lineDescription.blockType) {
+    case "katex":
+      return <><KaTeXRenderer key={key} expression={lineDescription.expression || ""}/>{lineDescription.hasBreak ? <br/> : ""}</>;
+      break;
+    case "ul":
+      return (
+        <ul key={key} >
+          {lineDescription.children?.map((e, i) => {
+            return renderComponent({lineDescription: e, key: i.toString()});
+          })}
+        </ul>
+      );
+      break;
+    case "li":
+      return (
+        <li key={key}>
+          {lineDescription.children?.map((e,i) => {
+            return renderComponent({lineDescription: e, key: i.toString()});
+          })}
+        </li>
+      )
+    default:
+      return <></>
+  }
+}
 export default KaTeXRenderer;

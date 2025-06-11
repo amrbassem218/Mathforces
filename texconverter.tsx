@@ -2,32 +2,39 @@ import KaTeXRenderer from "./src/components/KatexRenderer";
 import { ReactElement, useEffect, useState } from "react";
 import katex from "katex";
 import { lstat } from "fs";
-import { Problem, Problems } from "./types";
+import { lineDescription, Problem, Problems } from "./types";
 import {renderToString} from "react-dom/server";
-const processLatex = (content: string): string[] => {
-    let problemDescription: string[] = [];
+const processLatex = (content: string): lineDescription[] => {
+    let problemDescription: lineDescription[] = [];
     const lines = content.split('\n');
     for(let i = 0; i < lines.length; i++){
-        let processed: React.ReactElement = <></>;
+        let processed: lineDescription = {blockType: 'katex'};
 
         if(lines[i].includes("begin{enumerate}")){
             i++;
-            let processedChild: React.ReactElement[]= [];
+            let processedChild: lineDescription[]= [];
             while(i < lines.length && !lines[i].includes("end{enumerate}")){
                 if(lines[i].includes("\\item")){
                     let itemName = lines[i].slice(lines[i].indexOf('[')+1, lines[i].indexOf(']'))
                     let itemTxt = lines[i].slice(lines[i].indexOf(']')+1);
-                    processedChild.push(<li><KaTeXRenderer expression={String.raw`${itemName} ${itemTxt}`}/></li>)
+                    processedChild.push(
+                        {
+                            blockType: "li",
+                            children: [
+                                {
+                                    blockType: "katex",
+                                    expression: String.raw`${itemName} ${itemTxt}`
+                                }
+                            ]
+                        }
+                    )
                   }
                   i++;
             }
-            processed = (
-            <ul>
-                {processedChild.map((e) => {
-                    return e;
-                })}
-            </ul>
-            )
+            processed = {
+                blockType: "ul",
+                children: processedChild
+            }
         }
         else if(lines[i].includes("begin{align")){
           let lineWords = lines[i].split(" ");
@@ -41,15 +48,24 @@ const processLatex = (content: string): string[] => {
             return e;
           })
           lines[i] = lineWords.join(" ");
-          processed = (<><KaTeXRenderer expression={String.raw`${lines[i]}`}/><br/></>);
+          processed = {
+            blockType: "katex",
+            expression: String.raw`${lines[i]}`
+          };
         }
         else if(lines[i].includes("\\end")){
-          processed = (<><KaTeXRenderer expression={String.raw`${lines[i].slice(0,)}`}/></>);
+            processed = {
+              blockType: "katex",
+              expression: String.raw`${lines[i].slice(0)}`
+            };
         }
         else{
-            processed = (<><KaTeXRenderer expression={String.raw`${lines[i]}`}/></>);
+            processed = {
+              blockType: "katex",
+              expression: String.raw`${lines[i]}`
+            };
         }
-        problemDescription.push(renderToString(processed));
+        problemDescription.push(processed);
     }
     return problemDescription;
 };
@@ -106,3 +122,4 @@ export const useProblems = ({formattedTex}: IuseProblemsProps)=> {
 
     return { problems, error };
 };
+

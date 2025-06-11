@@ -13,6 +13,8 @@ import { useProblems } from "../../../texconverter";
 import 'katex/dist/katex.min.css';
 import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firestore';
 import Error from '../error';
+import { lineDescription } from 'types';
+import { renderComponent } from '@/components/KatexRenderer';
 
 interface IContestProps {
 }
@@ -149,9 +151,9 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                             <CardContent className='text-lg/8 w-full max-w-full'>
                                                 <div style={{ whiteSpace: 'pre-wrap' }}>
                                                     <>
-                                                    {problem.description.map((e: string)=> (
-                                                        <div dangerouslySetInnerHTML={{__html: e}}></div>
-                                                    ))}
+                                                    {problem.description.map((e: lineDescription, i: number)=> {
+                                                        return renderComponent({lineDescription: e, key: i.toString()});
+                                                    })}
                                                     </>
                                                 </div>
                                                 <form onSubmit={(e) => {e.preventDefault();return handleProblemSubmit(problem)}} className='flex items-center gap-2 m-3 mt-7'>

@@ -59,7 +59,10 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
   const [isCreatingContest, setIsCreatingContest] = useState(false);
   const {problems, error} = useProblems({formattedTex: formattedContestTex});
   const navigate = useNavigate();
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [createdAnswerFields, setCreatedAnswerFields] = useState(false);
   const [contestId, setContestId] = useState("111");
+  const [texInput, setTexInput] = useState("");
   //schema
   const form = useForm<zodSchema>({
     resolver: zodResolver(schema),
@@ -78,9 +81,18 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
     olympiad: ["Junior Olympiad", "National Olympiad", "International Olympiad"],
     college: ["Putnam", "Project Euler", "Proof-based"],
   }
-  
   useEffect(() => {
-      if(problems){
+    if (Object.keys(problems).length > 0 && !createdAnswerFields) {
+        const answers: Record<string, string> = {};
+        Object.keys(problems).forEach((problemName) => {
+            answers[problemName] = '';
+        });
+        setAnswers(answers);
+        setCreatedAnswerFields(true);
+    }
+  },[problems])  
+  useEffect(() => {
+      if(problems && isCreatingContest){
             console.log("problem1: ", Object.values(problems)[0]);
             console.log(formattedContestTex);
             const createProblems = async() => {
@@ -88,16 +100,28 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
                     await setDoc(doc(db, "contests", contestId, "problems", problem.name), {
                         name: problem.name,
                         description: problem.description,
-                        difficulty: problem.difficulty
+                        difficulty: problem.difficulty,
+                        answer: answers[problem.name]
                     });
                     console.log("one of the problems: ", problem.name);
                     console.log(contestId);
                 }
             }
+
             createProblems();
         }
-    }, [formattedContestTex, problems, contestId, isCreatingContest])
+    }, [answers, formattedContestTex, problems, contestId, isCreatingContest])
+    useEffect(() => {
+        setFormattedContestTex(formatTex(texInput));
+    }, [texInput]);
   const handleCreateContestSubmit = (data: zodSchema) => {
+    const missingAnswers = Object.keys(problems).filter(problemName => !answers[problemName]);
+    if (missingAnswers.length > 0) {
+        toast.error("Please provide answers for all problems", {
+            description: `Missing answers for: ${missingAnswers.join(", ")}`
+        });
+        return;
+    }
     const getId = async() => {
         const contestsSnap = await getDocs(collection(db, "contests"));
         let curContestId = "111";
@@ -125,6 +149,7 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         let formattedTex = formatTex(data.contestTex)
         console.log("formatted: ", formattedTex);
         setFormattedContestTex(formattedTex);
+        setIsCreatingContest(true);
         const newContest = await setDoc(doc(db, "contests", contestId), {
             name: data.contestName,
             id: contestId,
@@ -133,7 +158,6 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
             ended: now > contestDateAndTimeEnd,
             length: data.contestLength,
         })
-        setIsCreatingContest(true);
     }
     const undoContestCreation = async(contestId: string) => {
         const subCollections = ["problems"];
@@ -191,12 +215,33 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
                         <FormItem>
                             <FormLabel>Contest Latex</FormLabel>
                             <FormControl>
-                                <Textarea placeholder='Paste Contest Tex here' {...field}/>
+                                <Textarea placeholder='Paste Contest Tex here' {...field} onChange={(e) => {setTexInput(e.target.value); form.setValue("contestTex", e.target.value)}} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
                     )}
                     />
+                    {Object.keys(problems).length > 0 && <h1>Answers: </h1> && Object.keys(problems).map((e, i) => (
+                        <FormItem key={i}>
+                            <FormLabel>{e}</FormLabel>
+                            <FormControl>
+                                <Input 
+                                    type="number" 
+                                    placeholder={`${e} answer`} 
+                                    value={answers[e as keyof typeof answers]}
+                                    onChange={(event) => {
+                                        const value = event.target.value;
+                                        setAnswers(prev => ({
+                                            ...prev,
+                                            [e as keyof typeof answers]: value
+                                        }));
+                                    }}
+                                    required
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    ))}
                     <DateAndTimePicker onChange={({date, time}) => {
                         if(date instanceof Date){
                             form.setValue("contestDate", date);

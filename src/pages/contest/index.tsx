@@ -33,8 +33,6 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
     const [contestId, setContestId] = useState<string>("");
     const activeTab = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md"
     const activeProblem = "data-[state=active]:bg-primary data-[state=active]:text-lavender"
-    useEffect(() => {
-    }, [id])
     useEffect(()=> {
         if(db && id){
             if(!contestId){

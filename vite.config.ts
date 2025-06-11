@@ -35,13 +35,5 @@ export default defineConfig({
     rollupOptions: {
       external: ['latex.js/dist/documentclasses/.keep', 'latex.js/dist/packages/.keep'],
     }
-  },
-  css: {
-    preprocessorOptions: {
-      css: {
-        additionalData: `@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
-                        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Love+Ya+Like+A+Sister&display=swap');`
-      }
-    }
   }
 })

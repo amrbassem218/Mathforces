@@ -140,6 +140,7 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                                     ))}
                                 </TabsList>
                             </div>
+
                             <div className='col-span-7'>
                                 {problems.map((problem) =>(
                                     <TabsContent key={problem.name} value={problem.name}>

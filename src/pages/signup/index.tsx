@@ -21,19 +21,17 @@ import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
 
 export function Signup() {
-  const [user, loading] = useAuthState(auth);
-  
+  const [loading] = useAuthState(auth);
   const [userError, setUserError] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [userName, setUserName] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [userNameTaken, setUserNameTaken] = useState<boolean | null>(null);
-    const {signup , login, logInWithGoogle, logInWithGithub,logout} = useAuthUserContext();
+    const {signup, logInWithGoogle, logInWithGithub} = useAuthUserContext();
     const [emailVerificationSent, setEmailVerificationSent] = useState<boolean>(false);
     const [weakPass, setWeakPass] = useState<boolean | null>(null);
     const [weakPassError, setWeakPassError] = useState<string>("");
     const navigate = useNavigate();
-    const flag = true;
     const handleSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!email){

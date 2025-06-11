@@ -10,7 +10,7 @@ import { auth, db } from '../../../firebaseConfig';
 interface IContestsProps {
 }
 
-const Contests: React.FunctionComponent<IContestsProps> = (props) => {
+const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   const [pastContests, setPastContests] = useState<DocumentData[] | null>(null);
   const [upcomingContests, setUpcomingContests] = useState<DocumentData[] | null>(null);
   const [registeredContests, setRegisteredContests] = useState<DocumentData[] | null>(null);

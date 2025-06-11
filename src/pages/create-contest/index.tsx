@@ -189,7 +189,9 @@ const CreateContest: React.FunctionComponent = () => {
   if(loading){
     return <div>loading...</div>
   }
-
+  if(!user){
+    navigate('/login');
+  }
   return (
     <div>
         <Header login={"full"} signup={"outline"}/>

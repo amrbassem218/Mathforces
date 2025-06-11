@@ -122,6 +122,12 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         });
         return;
     }
+    if(Object.keys(answers).length == 0){
+        toast.error("Invalid Tex Format", {
+            description: `Please Follow the guidelines here`
+        });
+        return;
+    } 
     const getId = async() => {
         const contestsSnap = await getDocs(collection(db, "contests"));
         let curContestId = "111";

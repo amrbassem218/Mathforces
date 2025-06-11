@@ -1,8 +1,8 @@
-import { Dialog, DialogContent } from "./dialog"
 import { Button } from "@/components/ui/button"
-import { Divide, MailCheck } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { MailCheck } from "lucide-react"
+import { useState } from "react"
+import { Dialog, DialogContent } from "./dialog"
 
 export default function EmailVerificationPopup() {
   const [open, setOpen] = useState(true)

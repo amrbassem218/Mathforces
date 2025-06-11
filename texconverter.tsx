@@ -1,22 +1,18 @@
-import KaTeXRenderer from "./src/components/KatexRenderer";
-import { ReactElement, useEffect, useState } from "react";
-import katex from "katex";
-import { lstat } from "fs";
-import { lineDescription, Problem, Problems } from "./types";
-import {renderToString} from "react-dom/server";
+import { useEffect, useState } from "react";
+import { lineDescription, Problems } from "./types";
 const processLatex = (content: string): lineDescription[] => {
-    let problemDescription: lineDescription[] = [];
+    const problemDescription: lineDescription[] = [];
     const lines = content.split('\n');
     for(let i = 0; i < lines.length; i++){
         let processed: lineDescription = {blockType: 'katex'};
 
         if(lines[i].includes("begin{enumerate}")){
             i++;
-            let processedChild: lineDescription[]= [];
+            const processedChild: lineDescription[]= [];
             while(i < lines.length && !lines[i].includes("end{enumerate}")){
                 if(lines[i].includes("\\item")){
-                    let itemName = lines[i].slice(lines[i].indexOf('[')+1, lines[i].indexOf(']'))
-                    let itemTxt = lines[i].slice(lines[i].indexOf(']')+1);
+                    const itemName = lines[i].slice(lines[i].indexOf('[')+1, lines[i].indexOf(']'))
+                    const itemTxt = lines[i].slice(lines[i].indexOf(']')+1);
                     processedChild.push(
                         {
                             blockType: "li",
@@ -78,12 +74,12 @@ export const useProblems = ({formattedTex}: IuseProblemsProps)=> {
     useEffect(() => {
         const loadProblems = async () => {
             try {
-                let lines = formattedTex.split('\n');
+                const lines = formattedTex.split('\n');
                 const parsedProblems: Problems = {};
                 let flag = false;
                 let curProblem = "";
                 let currentProblemName = "";
-                for (let ln of lines) {
+                for (const ln of lines) {
                     if(ln.includes("end{itemize")) break;
                     if (ln.slice(0, 6) === "\\item[" && ln[8] === "]") {
                         if (currentProblemName && curProblem) {

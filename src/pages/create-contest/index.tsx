@@ -1,45 +1,39 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import Header from '@/components/ui/Header';
-import { collection, deleteDoc, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../../../firebaseConfig';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Textarea } from "@/components/ui/textarea"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { FaCaretDown } from "react-icons/fa";
-import { useForm } from 'react-hook-form';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { DateAndTimePicker } from '@/components/ui/dateAndTmePicker';
-import { Label } from '@/components/ui/label';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
+} from "@/components/ui/form";
+import Header from '@/components/ui/Header';
+import { Input } from '@/components/ui/input';
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useForm } from 'react-hook-form';
+import { FaCaretDown } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { z } from 'zod';
-import { toast, Toaster } from 'sonner';
+import { auth, db } from '../../../firebaseConfig';
 import { useProblems } from '../../../texconverter';
-import { Problem, Problems } from 'types';
-import {formatTex} from "../../../texFormatter"
-interface ICreateContestProps {
-    
-}
+import { formatTex } from "../../../texFormatter";
+
 const schema = z.object({
   contestName: z.string().min(10).max(90),
   contestTex: z.string().min(100), // Should add a live Tex editor and validator here 
@@ -48,22 +42,20 @@ const schema = z.object({
   contestTime: z.string().min(1, "Set Contest Time"),
   contestDate: z.date({required_error: "Date is required"}),
 })
+
 type zodSchema = z.infer<typeof schema>;
-const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
-  const [contestName, setContestName] = useState("");
-  const [contestTex, setContestTex] = useState("");
-  const [contestDifficulty, setContestDifficulty] = useState("");
+
+const CreateContest: React.FunctionComponent = () => {
   const [user, loading] = useAuthState(auth);
-  const [dateAndTime, setDateAndTime] = useState<{date: Date | undefined; time:string | undefined;}>({date: undefined, time: ""});
   const [formattedContestTex, setFormattedContestTex] = useState("");
   const [isCreatingContest, setIsCreatingContest] = useState(false);
-  const {problems, error} = useProblems({formattedTex: formattedContestTex});
+  const {problems} = useProblems({formattedTex: formattedContestTex});
   const navigate = useNavigate();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [createdAnswerFields, setCreatedAnswerFields] = useState(false);
   const [contestId, setContestId] = useState("111");
   const [texInput, setTexInput] = useState("");
-  //schema
+
   const form = useForm<zodSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -75,12 +67,14 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         contestDate: undefined,
     }
   });
+
   const contestDifficultyTypes = {
     div: ["Div.1", "Div.2", "Div.3", "Div.4"],
     standardized: ["ACT","SAT","GRE", "AP Calc AB", "AMC 8", "AMC 10", "AMC 12", "AIME"],
     olympiad: ["Junior Olympiad", "National Olympiad", "International Olympiad"],
     college: ["Putnam", "Project Euler", "Proof-based"],
   }
+
   useEffect(() => {
     if (Object.keys(problems).length > 0 && !createdAnswerFields) {
         const answers: Record<string, string> = {};
@@ -91,29 +85,27 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         setCreatedAnswerFields(true);
     }
   },[problems])  
+
   useEffect(() => {
       if(problems && isCreatingContest){
-            console.log("problem1: ", Object.values(problems)[0]);
-            console.log(formattedContestTex);
             const createProblems = async() => {
-                for(let problem of Object.values(problems)){
+                for(const problem of Object.values(problems)){
                     await setDoc(doc(db, "contests", contestId, "problems", problem.name), {
                         name: problem.name,
                         description: problem.description,
                         difficulty: problem.difficulty,
                         answer: answers[problem.name]
                     });
-                    console.log("one of the problems: ", problem.name);
-                    console.log(contestId);
                 }
             }
-
             createProblems();
         }
     }, [answers, formattedContestTex, problems, contestId, isCreatingContest])
+
     useEffect(() => {
         setFormattedContestTex(formatTex(texInput));
     }, [texInput]);
+
   const handleCreateContestSubmit = (data: zodSchema) => {
     const missingAnswers = Object.keys(problems).filter(problemName => !answers[problemName]);
     if (missingAnswers.length > 0) {
@@ -128,35 +120,35 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         });
         return;
     } 
+
     const getId = async() => {
         const contestsSnap = await getDocs(collection(db, "contests"));
         let curContestId = "111";
         contestsSnap.forEach((contest) => {
             const contestData = contest.data();
             if(contestData.id){
-                console.log(Number(contestData.id)+1);
-                console.log(Number(Number(curContestId)));
                 curContestId = Math.max(Number(contestData.id)+1, Number(curContestId)).toString();
             }
         })
         setContestId(curContestId);
         return curContestId;
     }
+
     const contestDateString = data.contestDate.toLocaleDateString('en-US', {
         weekday: "long",
         month: "long",
         day: "2-digit"
     })
+
     const createContest = async(contestId: string) => {
         const now = new Date();
         const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000)
         const contestDateAndTimeEnd = new Date(contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000)
         
-        let formattedTex = formatTex(data.contestTex)
-        console.log("formatted: ", formattedTex);
+        const formattedTex = formatTex(data.contestTex)
         setFormattedContestTex(formattedTex);
         setIsCreatingContest(true);
-        const newContest = await setDoc(doc(db, "contests", contestId), {
+        await setDoc(doc(db, "contests", contestId), {
             name: data.contestName,
             id: contestId,
             contestTex: formattedTex,
@@ -165,6 +157,7 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
             length: data.contestLength,
         })
     }
+
     const undoContestCreation = async(contestId: string) => {
         const subCollections = ["problems"];
         subCollections.forEach(async(col) => {
@@ -175,10 +168,10 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         })
         await deleteDoc(doc(db, "contests", contestId))
     }   
+
     getId().then((id) => {
         navigate('/contests')
         createContest(id).then(() => { 
-            console.log("contest has been created");
             toast("Contest has been created", {
                 description: contestDateString,
                 action: {
@@ -189,11 +182,14 @@ const CreateContest: React.FunctionComponent<ICreateContestProps> = (props) => {
         })
     })
   }
+
   const difficulty = form.watch("contestDifficulty");
   const length = form.watch("contestLength");
+
   if(loading){
     return <div>loading...</div>
   }
+
   return (
     <div>
         <Header login={"full"} signup={"outline"}/>

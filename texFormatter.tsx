@@ -1,4 +1,3 @@
-import { useState, useCallback, useMemo } from 'react';
 
 function convertMboxWithNestedMath(latexString: string): string {
     const patternWithMath = /\\mbox\{([^$]*)\$([^$]*)\$([^}]*)\}/gs;
@@ -16,7 +15,6 @@ function convertMboxWithNestedMath(latexString: string): string {
 }
 
 function formatTex(texText: string): string {
-    // Match only the main \begin{itemize}...\end{itemize} block
     const itemizeMatch = texText.match(/\\begin\{itemize\}(.*?)\\end\{itemize\}/s);
     if (!itemizeMatch) {
         return convertMboxWithNestedMath(texText);

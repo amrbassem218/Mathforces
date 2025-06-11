@@ -1,17 +1,14 @@
-// KaTeXRenderer.tsx
-import React, { useEffect, useRef } from 'react';
-import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import 'katex/dist/katex.min.css';
-import { lineDescription, IrenderComponent } from 'types';
-// import 
+import React, { useEffect, useRef } from 'react';
+import { IrenderComponent } from 'types';
 interface KaTeXRendererProps {
   expression: string;
   displayMode?: boolean;
 }
 
 export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
-  let element = useRef<HTMLDivElement>(null);
+  const element = useRef<HTMLDivElement>(null);
   expression = expression
     .replace(/\\mbox/g, '\\text')
     .replace(/\\rm/g, '\\mathrm')

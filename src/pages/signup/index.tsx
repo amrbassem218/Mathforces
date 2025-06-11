@@ -1,4 +1,12 @@
-import { Icons } from "../../components/ui/icons"
+import EmailVerificationPopup from "@/components/ui/emailVerificationPopup"
+import Header from "@/components/ui/Header"
+import { useAuthUserContext } from "@/context/authUserContext"
+import { reload, sendEmailVerification } from "firebase/auth"
+import { collection, doc, getDocs, setDoc } from "firebase/firestore"
+import React, { useEffect, useState } from "react"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { useNavigate } from "react-router-dom"
+import { auth, db } from "../../../firebaseConfig"
 import { Button } from "../../components/ui/button"
 import {
   Card,
@@ -8,18 +16,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card"
+import { Icons } from "../../components/ui/icons"
 import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
-import React, { useEffect, useInsertionEffect, useRef, useState } from "react"
-import { useAuthUserContext } from "@/context/authUserContext"
-import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore"
-import { auth, db } from "../../../firebaseConfig"
-import { reload, sendEmailVerification } from "firebase/auth"
-import EmailVerificationPopup from "@/components/ui/emailVerificationPopup"
-import { useNavigate } from "react-router-dom"
-import { AlignVerticalSpaceAround, CodeSquare, Divide } from "lucide-react"
-import { useAuthState } from "react-firebase-hooks/auth"
-import Header from "@/components/ui/Header"
 
 export function Signup() {
   const [user, loading] = useAuthState(auth);

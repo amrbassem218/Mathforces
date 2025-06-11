@@ -1,20 +1,18 @@
-import * as React from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, db } from '../../../firebaseConfig';
-import Header from '@/components/ui/Header';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@radix-ui/react-label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useState, useRef, useEffect } from 'react';
-import { useProblems } from "../../../texconverter";
-import 'katex/dist/katex.min.css';
-import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firestore';
-import Error from '../error';
-import { lineDescription } from 'types';
 import { renderComponent } from '@/components/KatexRenderer';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import Header from '@/components/ui/Header';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firestore';
+import 'katex/dist/katex.min.css';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useNavigate, useParams } from 'react-router-dom';
+import { lineDescription } from 'types';
+import { auth, db } from '../../../firebaseConfig';
+import Error from '../error';
 
 interface IContestProps {
 }
@@ -59,7 +57,7 @@ const Contest: React.FunctionComponent<IContestProps> = (props) => {
                     if(contestSnap.exists()){
                         setContestData(contestSnap.data());
                         const problemsSnap = await getDocs(collection(contestRef, "problems"));
-                        let arr: DocumentData[] = [];
+                        const arr: DocumentData[] = [];
                         problemsSnap.forEach((doc) => {
                             arr.push(doc.data());
                             setInputAnswer({...inputAnswer, [doc.data().name]: ""});

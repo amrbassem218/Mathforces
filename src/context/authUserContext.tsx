@@ -1,8 +1,7 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, User, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, User } from 'firebase/auth';
 import * as React from 'react';
-import {auth} from "../../firebaseConfig"
-import { useState, useEffect, useContext, createContext } from 'react';
-import { inflateRaw } from 'zlib';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { auth } from "../../firebaseConfig";
 interface AuthUserProviderProps {
     children: React.ReactNode;
 }

@@ -1,4 +1,10 @@
-import { Icons } from "../../components/ui/icons"
+import Header from "@/components/ui/Header"
+import { useAuthUserContext } from "@/context/authUserContext"
+import { sendEmailVerification } from "firebase/auth"
+import React, { useEffect, useState } from "react"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { useNavigate } from "react-router-dom"
+import { auth } from "../../../firebaseConfig"
 import { Button } from "../../components/ui/button"
 import {
   Card,
@@ -8,17 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card"
+import { Icons } from "../../components/ui/icons"
 import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
-import { useEffect, useState } from "react"
-import { useAuthUserContext } from "@/context/authUserContext"
-import { sendEmailVerification } from "firebase/auth"
-import { useNavigate } from "react-router-dom"
-import EmailVerificationPopup from "@/components/ui/emailVerificationPopup"
-import React from "react"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "../../../firebaseConfig"
-import Header from "@/components/ui/Header"
 export function Login() {
     const [userError, setUserError] = useState<string>("");
     const [email, setEmail] = useState<string>("");

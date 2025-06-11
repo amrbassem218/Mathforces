@@ -1,10 +1,6 @@
-import { useAuthUserContext } from '@/context/authUserContext';
-import Login from '@/pages/login';
 import * as React from 'react';
-import { Navigate, Outlet, Route, Router, useLocation } from 'react-router-dom';
-import {useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
-import {useAuthState} from 'react-firebase-hooks/auth'
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Navigate, Outlet } from 'react-router-dom';
 import { auth } from '../../../firebaseConfig';
 interface ProtectedRoutesProps {
 }

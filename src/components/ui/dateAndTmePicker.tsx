@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { ChevronDownIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -12,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 interface DateAndTimePicker{
   onChange: (values: {date?: Date | undefined, time?: string}) => void;
 }

@@ -1,18 +1,16 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Router, RouterProvider, useLocation } from 'react-router-dom'
-import router from './router'
 import 'katex/dist/katex.min.css';
-import { Toaster } from 'sonner'
-  function App() {
-  const [count, setCount] = useState(0)
+import './App.css';
 
+import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
+
+import router from './router';
+
+function App() {
   return (  
     <>
-    <Toaster/>
-    <RouterProvider router={router}/>
+      <Toaster/>
+      <RouterProvider router={router}/>
     </>
   )
 }

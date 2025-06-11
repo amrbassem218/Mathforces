@@ -1,12 +1,12 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Header from '@/components/ui/Header';
-import { collection, doc, DocumentData, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import { auth, db } from '../../../firebaseConfig';
+import { collection, doc, DocumentData, getDocs, setDoc } from 'firebase/firestore';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../../../firebaseConfig';
 interface IContestsProps {
 }
 
@@ -19,8 +19,8 @@ const Contests: React.FunctionComponent<IContestsProps> = (props) => {
   useEffect(() => {
     const getContests = async() => {
       const contestSnap = await getDocs(collection(db, "contests"))
-      let pastContestTemp: DocumentData[] = [];
-      let upcomingContestTemp: DocumentData[] = [];
+      const pastContestTemp: DocumentData[] = [];
+      const upcomingContestTemp: DocumentData[] = [];
       contestSnap.forEach((contest) => {
         const contestData = contest.data();
         if(contestData.ended == true){

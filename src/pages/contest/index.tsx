@@ -28,7 +28,6 @@ const Contest: React.FunctionComponent = () => {
     const [contestLoadError, setContestLoadError] = useState(false);
     const [inputAnswer, setInputAnswer] = useState<Record<string,problemInputAnswer>>({});
     const [contestId, setContestId] = useState<string>("");
-    const [activeProblem, setActiveProblem] = useState<string>("");
     const activeTabStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md";
     const activeProblemStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender";
 

@@ -14,5 +14,4 @@ const ProtectedRoutes: React.FunctionComponent<ProtectedRoutesProps> = (_props) 
     (user  ? <Outlet/> : <Navigate to={"/login"}/>)
   );
 };
-
 export default ProtectedRoutes;

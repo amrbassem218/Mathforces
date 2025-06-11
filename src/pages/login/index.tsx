@@ -111,11 +111,11 @@ export function Login() {
                     </CardHeader>
                     <CardContent className="grid gap-4">
                         <div className="grid grid-cols-2 gap-6">
-                            <Button variant="outline" className="cursor-pointer border-border" onClick={handleGithubSubmit} type="button">
+                            <Button disabled variant="outline" className="cursor-pointer border-border" onClick={handleGithubSubmit} type="button">
                                 <Icons.gitHub />
                                 GitHub
                             </Button>
-                            <Button variant="outline" onClick={handleGoogleSubmit} className="cursor-pointer border-border" type="button">
+                            <Button disabled variant="outline" onClick={handleGoogleSubmit} className="cursor-pointer border-border" type="button">
                                 <Icons.google />
                                 Google
                             </Button>

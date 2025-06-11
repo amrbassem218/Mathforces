@@ -184,7 +184,6 @@ const CreateContest: React.FunctionComponent = () => {
   }
 
   const difficulty = form.watch("contestDifficulty");
-  const length = form.watch("contestLength");
 
   if(loading){
     return <div>loading...</div>

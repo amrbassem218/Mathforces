@@ -105,7 +105,7 @@ const Contest: React.FunctionComponent = () => {
 
     return (
         <div className='flex flex-col h-screen'>
-            <Header login={null} signup={null}/>
+            <Header login={"full"} signup={"outline"}/>
             <Tabs defaultValue="problems" className="mx-10 flex-1 flex flex-col mt-15 items-center">
                 <TabsList className="grid w-3xl grid-cols-4 h-10 max-h-20 border-2 border-border rounded-md p-1 mb-6">
                     <TabsTrigger value="problems" className={activeTab}>Problems</TabsTrigger>

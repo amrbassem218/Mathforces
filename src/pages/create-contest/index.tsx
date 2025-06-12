@@ -44,7 +44,6 @@ const schema = z.object({
 })
 
 type zodSchema = z.infer<typeof schema>;
-
 const CreateContest: React.FunctionComponent = () => {
   const [user, loading] = useAuthState(auth);
   const [formattedContestTex, setFormattedContestTex] = useState("");
@@ -52,10 +51,11 @@ const CreateContest: React.FunctionComponent = () => {
   const {problems} = useProblems({formattedTex: formattedContestTex});
   const navigate = useNavigate();
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [problemDifficulty, setProblemDifficulty] = useState<Record<string, number>>({});
+  const [problemTags, setProblemTags] = useState<Record<string, string[]>>({});
   const [createdAnswerFields, setCreatedAnswerFields] = useState(false);
   const [contestId, setContestId] = useState("111");
   const [texInput, setTexInput] = useState("");
-
   const form = useForm<zodSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -74,7 +74,6 @@ const CreateContest: React.FunctionComponent = () => {
     olympiad: ["Junior Olympiad", "National Olympiad", "International Olympiad"],
     college: ["Putnam", "Project Euler", "Proof-based"],
   }
-
   useEffect(() => {
     if (Object.keys(problems).length > 0 && !createdAnswerFields) {
         const answers: Record<string, string> = {};
@@ -155,6 +154,8 @@ const CreateContest: React.FunctionComponent = () => {
             date: contestDateAndTime, 
             ended: now > contestDateAndTimeEnd,
             length: data.contestLength,
+            registered: 0,
+
         })
     }
 
@@ -288,6 +289,7 @@ const CreateContest: React.FunctionComponent = () => {
                                     placeholder="e.g. 2"
                                     {...field}
                                     className="w-24"
+                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
                                     />
                                 </div>
                             </FormControl>

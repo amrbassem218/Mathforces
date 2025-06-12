@@ -82,9 +82,10 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   const isRunnning = (contest: DocumentData): boolean => {
     if(contest){
       const now = new Date();
-      const contestDate = new Date(contest.date);
+      const contestDate = contest.date.toDate();
       const contestEnd = new Date(contestDate.getTime() + contest.length * 60 * 60 * 1000)
-      if(now > contest.date && now < contestEnd){
+      console.log(contestDate);
+      if(now > contestDate && now < contestEnd){
         return true;
       }
     }

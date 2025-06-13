@@ -13,7 +13,7 @@ import { Users } from 'lucide-react';
 import path, { format } from 'path';
 import { CalendarDays } from 'lucide-react';
 import { Archive } from 'lucide-react';
-
+import {contestEndTime, ended, isRunnning} from "../../../utilities"
 interface IContestsProps {
 }
 
@@ -31,7 +31,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
       const upcomingContestTemp: DocumentData[] = [];
       contestSnap.forEach((contest) => {
         const contestData = contest.data();
-        if(contestData.ended == true){
+        if(ended(contestData) == true){
           pastContestTemp.push(contestData);
         }
         else{
@@ -105,21 +105,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
       navigate('/login');
     }
   }
-  const contestEndTime = (contest: DocumentData): Date => {
-    const contestDate = contest.date.toDate();
-    const contestEnd = new Date(contestDate.getTime() + contest.length * 60 * 60 * 1000)
-    return contestEnd;
-  }
-  const isRunnning = (contest: DocumentData): boolean => {
-    if(contest){
-      const now = new Date();
-      const contestDate = contest.date.toDate();
-      if(now > contestDate && now < contestEndTime(contest)){
-        return true;
-      }
-    }
-    return false;
-  }
+  
   const getContestDate = (contest:DocumentData) => {
     const contestDate = contest.date.toDate();
     const formatter = new Intl.DateTimeFormat("en-qz", {
@@ -136,7 +122,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     return {full: formattedDate + " " + time, date: formattedDate, time: time, dateParts: dateParts, part: part};
   }
   const handleContestend = async(contest: DocumentData) => {
-    await setDoc(doc(db, "contests", contest.id), {...contest, ended: true});
+    // await setDoc(doc(db, "contests", contest.id), {...contest, ended: true});
     window.location.reload();
   }
   const handleDateClick = (contest: DocumentData) => {
@@ -206,13 +192,11 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                         ? <div className='flex items-center gap-2'>
                           <div className='w-2 h-2 rounded-full bg-red-500 flex items-center justify-center'><div className='w-2 h-2 rounded-full bg-red-500 blur-xs'></div></div>
                           <h2 className='text-red-600 font-mono text-sm'>Live now! Ends in  
-                            {
                               <Countdown date={contestEndTime(contest)} onComplete={() => handleContestend(contest)} renderer={({hours, minutes, seconds, completed}) => 
                                 completed ? <p>Time's up!!</p> : ` ${String(hours).padStart(2, '0')}:
                                                                   ${String(minutes).padStart(2, '0')}:
                                                                   ${String(seconds).padStart(2, '0')}`
                               }/>
-                            }
                             </h2>
                         </div>
                         : <div className='flex gap-1 text-text/60 hover:text-text/75 items-center  cursor-pointer ' onClick={() => handleDateClick(contest)}>

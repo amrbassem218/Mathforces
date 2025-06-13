@@ -186,7 +186,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                       </div>
                       <div className='flex flex-col gap-2 items-center my-auto'>
                         {
-                          registeredContests?.some((e) => e.id == contest.id) == undefined
+                          !registeredContests?.some((e) => e.id == contest.id)
                           ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => handleNewRegister(contest)}>Register</Button>
                           : isRunnning(contest) 
                           ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}`)}>Enter</Button>

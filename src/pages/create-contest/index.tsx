@@ -138,12 +138,14 @@ const CreateContest: React.FunctionComponent = () => {
         month: "long",
         day: "2-digit"
     })
-
     const createContest = async(contestId: string) => {
         const now = new Date();
-        const contestDateAndTime = new Date(data.contestDate.getTime() + (parseFloat(data.contestTime)) * 60 * 60 * 1000)
+        const contestHour = (Number(data.contestTime.slice(0,2))) * 60 * 60 * 1000;
+        const contestMinute = (Number(data.contestTime.slice(3,5))) * 60  * 1000;
+        const contestSecond = (Number(data.contestTime.slice(6,8))) * 1000;
+        const contestTime = contestHour + contestMinute + contestSecond;
+        const contestDateAndTime = new Date(data.contestDate.getTime() + contestTime);
         const contestDateAndTimeEnd = new Date(contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000)
-        
         const formattedTex = formatTex(data.contestTex)
         setFormattedContestTex(formattedTex);
         setIsCreatingContest(true);
@@ -155,7 +157,7 @@ const CreateContest: React.FunctionComponent = () => {
             ended: now > contestDateAndTimeEnd,
             length: data.contestLength,
             registered: 0,
-
+            unofficiallyRegistered: 0,
         })
     }
 
@@ -169,7 +171,6 @@ const CreateContest: React.FunctionComponent = () => {
         })
         await deleteDoc(doc(db, "contests", contestId))
     }   
-
     getId().then((id) => {
         navigate('/contests')
         createContest(id).then(() => { 

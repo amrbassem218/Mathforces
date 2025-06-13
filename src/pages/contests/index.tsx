@@ -176,13 +176,14 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   if(loading){
     return <div>loading...</div>
   }
+
   return (
     <div>
         <Header login={"full"} signup={"outline"}/>
-        <div className='grid grid-cols-12'>
-          <div className='col-span-8 m-10 mx-20 max-w-200 flex flex-col gap-10'>
+        <div className='grid grid-cols-16'>
+          <div className='col-start-2 col-span-8 m-10 flex flex-col gap-10'>
             {/* Upcoming contests */}
-            <div className='w-[90%]'>
+            <div className='full'>
               {/* Upcoming Header */}
               <div className='flex place-content-between mb-2'>
                 <div className='flex gap-2'>
@@ -194,7 +195,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
               {/* Upcoming Body */}
               <Card className='border-border p-4 flex gap-4'>
                 {upcomingContests && upcomingContests.map((contest) => (
-                  <Card className={` border-border w-full px-2 ${isRunnning(contest) ? "border-l-4 border-l-red-500" : "border-l-4 border-l-primary"}  rounded-l-md`} key={contest.id} >
+                  <Card className={`flex justify-center h-25 border-border w-full px-2 ${isRunnning(contest) ? "border-l-4 border-l-red-500" : "border-l-4 border-l-primary"}  rounded-l-md`} key={contest.id} >
                     <CardContent className='flex items-center place-content-between gap-2'>
                       <div className='flex flex-col gap-2'>
                         <h1 className='font-medium text-2xl text-left flex-1'>{contest.name}</h1>
@@ -242,7 +243,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
             </div>
 
             {/* Past contests */}
-            <div className='w-[90%]'>
+            <div className='full'>
               {/* Past Header */}
               <div className='flex place-content-between mb-2'>
                 <div className='flex gap-2 items-center'>

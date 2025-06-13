@@ -10,6 +10,8 @@ import { auth, db } from '../../../firebaseConfig';
 import Countdown from "react-countdown";
 import { Activity } from 'lucide-react';
 import { Users } from 'lucide-react';
+import path, { format } from 'path';
+import { CalendarDays } from 'lucide-react';
 
 interface IContestsProps {
 }
@@ -33,6 +35,12 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
         else{
           upcomingContestTemp.push(contestData);
         }
+      })
+      pastContestTemp.sort((a,b) => {
+        return b.date - a.date;
+      })
+      upcomingContestTemp.sort((a,b) => {
+        return a.date - b.date;
       })
       setPastContests(pastContestTemp);
       setUpcomingContests(upcomingContestTemp);
@@ -61,11 +69,18 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
         id: contest.id,
         answered: []
       })
+      await setDoc(doc(db, "contests", contest.id), {
+        ...contest,
+        registered: contest.registered + 1
+      })
       if(registeredContests){
         setRegisteredContests([...registeredContests, contest])
       }
       else{
         setRegisteredContests([contest])
+      }
+      if(isRunnning(contest)){
+        navigate(`/contest/${contest.id}`);
       }
     }
     else{
@@ -95,11 +110,33 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     }
     return false;
   }
-
+  const getContestDate = (contest:DocumentData) => {
+    const contestDate = contest.date.toDate();
+    const formatter = new Intl.DateTimeFormat("en-qz", {
+      dateStyle: "full",
+      timeStyle: "short",
+    })
+    const dateParts = formatter.formatToParts(contestDate);
+    const part = (p: string) => {
+      return dateParts.find(e => e.type == p)?.value
+    }
+    let formattedDate = part("weekday")?.slice(0,3) + " " +  part("month") + "/" + part("day") + "/" +  part("year");
+    let time = part("hour") + ":" + part("minute") + part("dayPeriod");
+    // console.log(datePart);
+    return {full: formattedDate + " " + time, date: formattedDate, time: time, dateParts: dateParts, part: part};
+  }
   const handleContestend = async(contest: DocumentData) => {
     await setDoc(doc(db, "contests", contest.id), {ended: true});
     window.location.reload();
   }
+  const handleDateClick = (contest: DocumentData) => {
+    const {part} = getContestDate(contest);
+    window.open(`https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${part("dayPeriod") == "AM" ? part("hour") : (Number(part("hour"))+12).toString()}&min=${part("minute")}&sec=0`, "_blank")
+  }
+  // const getContestRegistered = (contest:DocumentData) => {
+
+  // }
+  useEffect(()=>{console.log(registeredContests)},[registeredContests])
   if(loading){
     return <div>loading...</div>
   }
@@ -108,7 +145,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
         <Header login={"full"} signup={"outline"}/>
         <div className='grid grid-cols-12'>
           <div className='col-span-8 m-10 mx-20 max-w-200 '>
-            <div className='w-full'>
+            <div className='w-[90%]'>
               {/* Upcoming Header */}
               <div className='flex place-content-between mb-2'>
                 <div className='flex gap-2'>
@@ -118,9 +155,9 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                 <Button variant='outline' onClick={handleCreateContest}>create your own</Button>
               </div>
               {/* Upcoming Body */}
-              <Card className='border-border p-4 w-[90%]'>
+              <Card className='border-border p-4 '>
                 {upcomingContests && upcomingContests.map((contest) => (
-                  <Card className='border-border w-full px-2 border-l-4 border-l-red-400 rounded-l-md' key={contest.id} >
+                  <Card className={`border-border w-full px-2 ${isRunnning(contest) ? "border-l-4 border-l-red-500" : "border-l-4 border-l-primary"}  rounded-l-md`} key={contest.id} >
                     <CardContent className='flex place-content-between gap-2'>
                       <div className='flex flex-col gap-2'>
                         <h1 className='font-medium text-2xl text-left flex-1'>{contest.name}</h1>
@@ -140,14 +177,22 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                             }
                             </h2>
                         </div>
-                        : <div></div>
+                        : <div className='flex gap-1 text-text/60 hover:text-text/75 items-center  cursor-pointer ' onClick={() => handleDateClick(contest)}>
+                          <CalendarDays className=' w-4.5 h-4.5'/>
+                          <p className='text-text/60 hover:text-text/75 underline tracking-wide text-sm '>{getContestDate(contest).full}</p>
+                        </div>
+                  
                         }
                       </div>
-                      <div className='flex flex-col gap-2 items-center'>
+                      <div className='flex flex-col gap-2 items-center my-auto'>
                         {
-                          registeredContests?.some((e) => e.id == contest.id) 
-                          ? <div className='w-32 rounded-md bg-green-400 m-auto'><h4 className='text-green-700 font-medium'>registered</h4></div>
-                          : <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => handleNewRegister(contest)}>Register</Button>
+                          registeredContests?.some((e) => e.id == contest.id) == undefined
+                          ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => handleNewRegister(contest)}>Register</Button>
+                          : isRunnning(contest) 
+                          ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}`)}>Enter</Button>
+                          : <div className='w-25 h-6 rounded-md bg-green-400 flex items-center justify-center'>
+                              <h4 className='text-green-700 text-sm font-medium text-center'>registered</h4>
+                            </div>
                         } 
                         <div className='flex gap-2 items-center'>
                           <Users className='text-text/60 w-4 h-4'/>

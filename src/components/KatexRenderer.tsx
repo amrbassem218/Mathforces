@@ -38,7 +38,7 @@ export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
 export const renderComponent = ({lineDescription, key}: IrenderComponent):React.ReactElement => {
   switch (lineDescription.blockType) {
     case "katex":
-      return <><KaTeXRenderer key={key} expression={lineDescription.expression || ""}/>{lineDescription.hasBreak ? <br/> : ""}</>;
+      return <><KaTeXRenderer expression={lineDescription.expression || ""}/>{lineDescription.hasBreak ? <br/> : ""}</>;
       break;
     case "ul":
       return (

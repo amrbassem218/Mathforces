@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
     },
     {
         element: <Contest/>,
-        path: "contest/:id",
+        path: "contest/:id/:registrationStatus",
         errorElement: <Error/>
     },
 ])

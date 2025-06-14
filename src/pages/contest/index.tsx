@@ -29,27 +29,28 @@ import {
 } from "@/components/ui/alert-dialog"
 interface problemInputAnswer {
     answer: string | null;
-    verdict: string | null;
+    verdict: boolean | null;
+    submitted: boolean;
 }
-interface IcontestProps {
-    registrationStatus: string;
-}
-const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) => {
+// interface IcontestProps {
+//     registrationStatus: string;
+// }
+const Contest: React.FunctionComponent = () => {
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
-    const {id} = useParams<{id: string}>();
+    const {id, registrationStatus} = useParams<{id: string, registrationStatus: string}>();
     const [contest, setContest] = useState<DocumentData | null>(null);
     const [problems, setProblems] = useState<DocumentData[] | null>(null);
     const [contestLoadError, setContestLoadError] = useState(false);
-    const [inputAnswer, setInputAnswer] = useState<Record<string,problemInputAnswer>>({});
+    const [inputAnswers, setInputAnswers] = useState<Record<string,problemInputAnswer>>({});
     const [contestId, setContestId] = useState<string>("");
     const activeTabStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md";
     const activeProblemStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender";
     const [contestEnded, setContestEnded] = useState<boolean>(false);
     const [popUp, setPopUp] = useState(false);
-    const handleInputAnswerChange = async(attr: string, value: string, problem: DocumentData) => {
+    const handleInputAnswerChange = async(attr: string, value: string | boolean, problem: DocumentData) => {
         if(user){
-            setInputAnswer(prev => ({
+            setInputAnswers(prev => ({
                 ...prev,
                 [problem.name]: {
                     ...prev[problem.name],
@@ -61,16 +62,17 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
     };
 
     const verdict = useCallback((problem: DocumentData) => {  
-        return inputAnswer[problem.name]?.verdict;
-    }, [inputAnswer]);
+        // console.log(inputAnswers);
+        return inputAnswers[problem.name]?.verdict;
+    }, [inputAnswers]);
     
     const problemStatuses = useMemo(() => {
         if (!problems) return {};
         return problems.reduce((acc, problem) => {
-            acc[problem.name] = verdict(problem);
+            acc[problem.name] =verdict(problem);
             return acc;
-        }, {} as Record<string, string | null>);
-    }, [problems, verdict]);
+        }, {} as Record<string, boolean | null>);
+    }, [problems, verdict, inputAnswers]);
 
     useEffect(() => {
         if(db && id) {
@@ -99,18 +101,48 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                         const problemsSnap = await getDocs(collection(contestRef, "problems"));
                         const arr: DocumentData[] = [];
                         const initialAnswers: Record<string, problemInputAnswer> = {};
-                        problemsSnap.forEach((doc) => {
-                            const problemData = doc.data();
+                        problemsSnap.forEach(async(problem) => {
+                            const problemData = problem.data();
                             arr.push(problemData);
-                            initialAnswers[problemData.name] = { answer: null, verdict: null };
+                            initialAnswers[problemData.name] = { answer: "", submitted: false,  verdict: null};
                         });
                         setProblems(arr);
-                        setInputAnswer(initialAnswers);
+                        setInputAnswers(initialAnswers);
+                        return {problems: arr, contest: contestSnap.data(), initalAnswers: initialAnswers};
                     } else {
                         setContestLoadError(true);
+                        return {};
                     }
                 };
-                getProblems();
+                getProblems().then((props) => {
+                    if(registrationStatus == "none" && user && props?.initalAnswers){
+                        const getAnswered = async() => {
+                            const officialContestData = await getDocs(collection(db, "users", user.uid, "contests", props.contest.id, "answered"));
+                            const unOfficialContestData = await getDocs(collection(db, "users", user.uid, "unofficialContests", props.contest.id, "answered"));
+                            let userAnswers = props.initalAnswers;
+                            console.log(userAnswers);
+                            officialContestData.forEach((problem: DocumentData) => {
+                                console.log(problem.id);
+                            })
+                            officialContestData.forEach((problem: DocumentData) => {
+                                let problemData = problem.data();
+                                console.log("data: ", userAnswers[problem.id]);
+                                if(!userAnswers[problem.id].verdict){
+                                    userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict}}
+                                }
+                            })
+                            unOfficialContestData.forEach((problem: DocumentData) => {
+                                let problemData = problem.data();
+                                if(!userAnswers[problem.id].verdict){
+                                    userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict}}
+                                }
+                            })
+                            console.log(userAnswers);
+                            setInputAnswers(userAnswers);
+                        }
+                        getAnswered();
+                    }
+                })
             }
         }
     }, [contestId, db, id]);
@@ -127,18 +159,15 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
     }    
     const handleProblemSubmit = (problem: DocumentData) => {
         const problemInput = document.getElementById(`${problem.name}-answer`) as HTMLInputElement;
-        let verdict = false;
         if(problemInput ){
             if(contest && ended(contest)) {
                 if(problem.answer == problemInput.value) {
-                    handleInputAnswerChange("verdict", "true", problem);
-                    verdict = true;
+                    handleInputAnswerChange("verdict", true, problem);
                 } else {
-                    handleInputAnswerChange("verdict", "false", problem);
+                    handleInputAnswerChange("verdict", false, problem);
                 }
-            } else {
-                handleInputAnswerChange("verdict", "in_contest", problem);
             }
+            handleInputAnswerChange("submitted", true, problem);
             if(registrationStatus == "official"){
                 setDoc(doc(db, "users", user.uid, "contests", contest.id, "answered", problem.name), {
                     answer: problemInput.value,
@@ -147,7 +176,6 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
             else{
                 setDoc(doc(db, "users", user.uid, "unofficialContests", contest.id, "answered", problem.name), {
                     answer: problemInput.value,
-                    verdict: verdict,
                 })
             }
         }
@@ -155,6 +183,28 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
     const handleContestEnd = async(contest: DocumentData) => {
         setContestEnded(true);
         setPopUp(true);
+        // console.log("doesn't happen")
+        const collectionName = registrationStatus == "official" ? "contests" : registrationStatus == "unofficial" ? "unofficialContests" : "";
+        if(!collectionName) return;
+        const correctAnswers = await getDocs(collection(db, "contests", contest.id, "problems"));
+        let userAnswers = inputAnswers;
+        correctAnswers.forEach((problem) => {
+            let problemData = problem.data();
+            userAnswers = {...userAnswers, [problemData.name]: {...userAnswers[problemData.name], verdict: (problemData.answer == userAnswers[problemData.name].answer)}}
+        })
+        // console.log("outside");
+        problems.forEach(async(problem) => {
+            // console.log("it happens");
+            // console.log(userAnswers[problem.name].answer, " : ", userAnswers[problem.name].verdict)
+            await setDoc(doc(db, "users", user.uid, collectionName, contest.id, "answered", problem.name), {
+                answer: userAnswers[problem.name].answer,
+                verdict: userAnswers[problem.name].verdict
+            })
+        })
+        setInputAnswers(userAnswers);
+    }
+    if(ended(contest) && registrationStatus != "none"){
+        navigate(`/contest/${id}/none`);
     }
     return (
         <>
@@ -169,8 +219,8 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => window.location.reload()}>Review</AlertDialogAction>
+                    <AlertDialogCancel>Review</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => window.location.reload()}>See Standing</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>}
@@ -188,8 +238,9 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                                 <TabsList className='flex flex-col gap-2'>
                                     {problems.map((problem) =>( 
                                         <TabsTrigger key={problem.name} value={problem.name} className={`${activeProblemStyle} rounded-full w-12 h-12 border-border border-1 font-bold text-text/55
-                                        ${problemStatuses[problem.name] === "true" ? "bg-green-300" :
-                                            problemStatuses[problem.name] === "false" ? "bg-red-300" : ""}
+                                        ${problemStatuses[problem.name] === true ? "bg-green-300" :
+                                            problemStatuses[problem.name] === false ? "bg-red-300" : 
+                                            inputAnswers[problem.name].submitted ? "bg-text/50" : ""}
                                         `}>
                                             {problem.name}
                                         </TabsTrigger>
@@ -216,7 +267,7 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                                                             type="text" 
                                                             id={`${problem.name}-answer`} 
                                                             placeholder='Enter Your Answer' 
-                                                            value={inputAnswer[problem.name]?.answer || ""} 
+                                                            value={inputAnswers[problem.name]?.answer || ""} 
                                                             className="w-96" 
                                                             onChange={(e) => handleInputAnswerChange("answer", e.target.value, problem)}
                                                         />
@@ -225,7 +276,7 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                                                 </CardContent>
                                             </Card>
                                             
-                                            {problemStatuses[problem.name] === "true" ?
+                                            {problemStatuses[problem.name] === true ?
                                                 <Card className='border-green-400'>
                                                     <CardTitle className='font-bold text-green-600 text-2xl'>Correct Answer</CardTitle>
                                                     <CardContent>
@@ -233,7 +284,7 @@ const Contest: React.FunctionComponent<IcontestProps> = ({registrationStatus}) =
                                                         <p>{problem.editorial}</p>
                                                     </CardContent>
                                                 </Card>
-                                            : problemStatuses[problem.name] === "false" ? 
+                                            : problemStatuses[problem.name] === false ? 
                                                 <Card className='border-red-400'>
                                                     <CardTitle className='font-bold text-red-600 text-2xl'>Wrong Answer</CardTitle>
                                                     <CardContent>

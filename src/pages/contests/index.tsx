@@ -31,10 +31,11 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
       const upcomingContestTemp: DocumentData[] = [];
       contestSnap.forEach((contest) => {
         const contestData = contest.data();
-        if(ended(contestData) == true){
+        if(ended(contestData)){
           pastContestTemp.push(contestData);
         }
         else{
+          console.log(contestData.date);
           upcomingContestTemp.push(contestData);
         }
       })
@@ -90,7 +91,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
         setRegisteredContests([contest])
       }
       if(isRunnning(contest)){
-        navigate(`/contest/${contest.id}`);
+        navigate(`/contest/${contest.id}/official`);
       }
     }
     else{
@@ -154,7 +155,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
       else{
         setUnofficiallyRegisteredContests([contest])
       }
-      navigate(`/contest/${contest.id}`)
+      navigate(`/contest/${contest.id}/unofficial`)
     }
   }
   // useEffect(()=>{console.log(registeredContests)},[registeredContests])

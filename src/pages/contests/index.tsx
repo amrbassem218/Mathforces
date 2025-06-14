@@ -211,7 +211,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                           !registeredContests?.some((e) => e.id == contest.id)
                           ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => handleNewRegister(contest)}>Register</Button>
                           : isRunnning(contest) 
-                          ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}`)}>Enter</Button>
+                          ?  <Button variant={'outline'} className='border-red-500 border-2 text-red-500 h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}/official`)}>Enter</Button>
                           : <div className='w-25 h-6 rounded-md bg-green-400 flex items-center justify-center'>
                               <h4 className='text-green-700 text-sm font-medium text-center'>registered</h4>
                             </div>
@@ -269,7 +269,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                         {
                           !unofficiallyRegisteredContests?.some((e) => e.id == contest.id)
                           ?  <Button variant={'outline'} className='border-primary border-2 text-primary h-7 w-30 rounded-sm ' onClick={() => handleAttempt(contest)}>Attempt</Button>
-                          : <Button variant={'outline'} className='border-secondary border-2 text-secondary h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}`)}>Review</Button>
+                          : <Button variant={'outline'} className='border-secondary border-2 text-secondary h-7 w-30 rounded-sm ' onClick={() => navigate(`/contest/${contest.id}/none`)}>Review</Button>
                         } 
                         <div className='flex gap-2 items-center'>
                           <Users className='text-text/60 w-4 h-4'/>

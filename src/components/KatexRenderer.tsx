@@ -35,6 +35,7 @@ export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
     return <span>Couldn't render Problem</span>;
   }
 };
+
 export const renderComponent = ({lineDescription, key}: IrenderComponent):React.ReactElement => {
   switch (lineDescription.blockType) {
     case "katex":

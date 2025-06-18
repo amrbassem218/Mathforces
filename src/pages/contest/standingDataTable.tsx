@@ -2,8 +2,8 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { db } from "../../../firebaseConfig";
 import * as React from "react";
 import { collection, doc, DocumentData, getDoc, getDocs } from "firebase/firestore";
-import { IgetStandingData, IproblemStanding, userPerformace } from "types";
-import { isRunnning } from "utilities";
+import { IgetStandingData, IproblemStanding, userPerformace } from "../../../types";
+import { isRunnning } from "../../../utilities";
 import { useEffect, useState } from "react";
 
 export const getStandingData = async({contest}: {contest: DocumentData}) => {

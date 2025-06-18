@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import Standing from './standing';
 interface problemInputAnswer {
     answer: string | null;
     verdict: boolean | null;
@@ -47,6 +48,7 @@ const Contest: React.FunctionComponent = () => {
     const activeTabStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender data-[state=active]:rounded-md";
     const activeProblemStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender";
     const [contestEnded, setContestEnded] = useState<boolean>(false);
+    const [activeTab, setActiveTab] = useState("problems");
     const [popUp, setPopUp] = useState(false);
     const handleInputAnswerChange = async(attr: string, value: string | boolean, problem: DocumentData) => {
         if(user){
@@ -117,7 +119,7 @@ const Contest: React.FunctionComponent = () => {
                 getProblems().then((props) => {
                     if(registrationStatus == "none" && user && props?.initalAnswers){
                         const getAnswered = async() => {
-                            const officialContestData = await getDocs(collection(db, "users", user.uid, "contests", props.contest.id, "answered"));
+                            const officialContestData = await getDocs(collection(db, "users", user.uid, "officialContests", props.contest.id, "answered"));
                             const unOfficialContestData = await getDocs(collection(db, "users", user.uid, "unofficialContests", props.contest.id, "answered"));
                             let userAnswers = props.initalAnswers;
                             console.log(userAnswers);
@@ -169,7 +171,7 @@ const Contest: React.FunctionComponent = () => {
             }
             handleInputAnswerChange("submitted", true, problem);
             if(registrationStatus == "official"){
-                setDoc(doc(db, "users", user.uid, "contests", contest.id, "answered", problem.name), {
+                setDoc(doc(db, "users", user.uid, "officialContests", contest.id, "answered", problem.name), {
                     answer: problemInput.value,
                 })
             }
@@ -184,7 +186,7 @@ const Contest: React.FunctionComponent = () => {
         setContestEnded(true);
         setPopUp(true);
         // console.log("doesn't happen")
-        const collectionName = registrationStatus == "official" ? "contests" : registrationStatus == "unofficial" ? "unofficialContests" : "";
+        const collectionName = registrationStatus == "official" ? "officialContests" : registrationStatus == "unofficial" ? "unofficialContests" : "";
         if(!collectionName) return;
         const correctAnswers = await getDocs(collection(db, "contests", contest.id, "problems"));
         let userAnswers = inputAnswers;
@@ -224,7 +226,7 @@ const Contest: React.FunctionComponent = () => {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>}
-            <Tabs defaultValue="problems" className="mx-10 flex-1 flex flex-col mt-15 items-center">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mx-10 flex-1 flex flex-col mt-15 items-center">
                 <TabsList className="grid w-3xl grid-cols-4 h-10 max-h-20 border-2 border-border rounded-md p-1 mb-6">
                     <TabsTrigger value="problems" className={activeTabStyle}>Problems</TabsTrigger>
                     <TabsTrigger value="standing" className={activeTabStyle}>Standing</TabsTrigger>
@@ -313,7 +315,8 @@ const Contest: React.FunctionComponent = () => {
                     </Tabs>
                 </TabsContent>
                 <TabsContent value="standing" className='w-full'>
-                    <Card>
+                    <Standing activeTab={activeTab} contest={contest}/>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle>Standing</CardTitle>
                             <CardDescription>
@@ -325,7 +328,7 @@ const Contest: React.FunctionComponent = () => {
                         </CardContent>
                         <CardFooter>
                         </CardFooter>
-                    </Card>
+                    </Card> */}
                 </TabsContent>
             </Tabs>
         </div>

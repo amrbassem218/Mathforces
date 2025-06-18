@@ -1,3 +1,8 @@
+import { getStandingData } from "@/pages/contest/standingDataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import * as React from "react";
+import { useEffect } from "react";
+
 export interface Problem { 
     name: string;
     description: lineDescription[];
@@ -15,4 +20,26 @@ export interface Problems {
 export interface IrenderComponent{
     lineDescription: lineDescription;
     key: string;
+}
+export interface IproblemStanding{
+    answer: string;
+    verdict: boolean | null;
+    timeAnswered: Date;
+}
+export interface userPerformace {
+    username: string;
+    userId: string;
+    registrationMode: string;
+    problems: {
+        [key: string]: IproblemStanding;
+    };
+    total: number;
+}
+export interface IgetStandingData{
+    standingData: userPerformace[];
+    problemsList: string[];
+}
+export interface IuseGetStanding{
+    data: IgetStandingData;
+    columns: ColumnDef<userPerformace>[];
 }

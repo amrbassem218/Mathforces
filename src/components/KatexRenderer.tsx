@@ -40,7 +40,6 @@ export const renderComponent = ({lineDescription, key}: IrenderComponent):React.
   switch (lineDescription.blockType) {
     case "katex":
       return <><KaTeXRenderer expression={lineDescription.expression || ""}/>{lineDescription.hasBreak ? <br/> : ""}</>;
-      break;
     case "ul":
       return (
         <ul key={key} >

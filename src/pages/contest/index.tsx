@@ -148,7 +148,6 @@ const Contest: React.FunctionComponent = () => {
             }
         }
     }, [contestId, db, id]);
-
     if(loading || !problems || !contest) {
         return <div>loading...</div>;
     }
@@ -315,9 +314,10 @@ const Contest: React.FunctionComponent = () => {
                     </Tabs>
                 </TabsContent>
                 <TabsContent value="standing" className='w-full'>
-                    <Standing activeTab={activeTab} contest={contest}/>
-                    {/* <Card>
-                        <CardHeader>
+                    {/* <Standing activeTab={activeTab} contest={contest}/> */}
+                    <Card>
+                        <Standing activeTab={activeTab} contest={contest}/>
+                        {/* <CardHeader>
                             <CardTitle>Standing</CardTitle>
                             <CardDescription>
                                 Standing includes trusted participants at the time of contest.
@@ -327,8 +327,8 @@ const Contest: React.FunctionComponent = () => {
                             <p>Nobody at contest</p>
                         </CardContent>
                         <CardFooter>
-                        </CardFooter>
-                    </Card> */}
+                        </CardFooter> */}
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>

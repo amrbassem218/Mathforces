@@ -10,7 +10,7 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
     let standingData: userPerformace[] = [];
     const standing = await getDocs(collection(db, "contests", contest.id, "standing"))
     let problemsList: string[] = [];
-    const problemsSnap = await getDocs(collection(db, "contets", contest.id, "problems"));
+    const problemsSnap = await getDocs(collection(db, "contests", contest.id, "problems"));
     problemsSnap.forEach((problem) => {
         problemsList.push(problem.id);
     })
@@ -79,12 +79,13 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
         ]
 } 
 
-export const useGetStanding = async({contest} : {contest:DocumentData}) => {
+export const useGetStanding = ({contest} : {contest:DocumentData}) => {
     const [data, setData] = useState<IgetStandingData>({standingData: [], problemsList: []});
     const [columns, setColumns] = useState<ColumnDef<userPerformace>[]>([]);
     useEffect(() => {
         getStandingData({contest}).then((props) => {
             setData(props);
+            console.log(props.problemsList);
             setColumns(getColumns(props))
         })
     }, [])

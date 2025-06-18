@@ -10,7 +10,6 @@ import router from './router';
   function App() {
   return (  
     <>
-    <Analytics/>
     <Toaster/>
     <RouterProvider router={router}/>
     </>

@@ -110,6 +110,9 @@
   h1,h2,h3,h4,h5,h6,p,Button,CardHeader{
     @apply text-text
   }
+  .table_element{
+    @apply border-border border-1 rounded-md 
+  }
 }
 
 /* Add these styles for latex.js content */

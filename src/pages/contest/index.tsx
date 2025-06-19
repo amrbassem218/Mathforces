@@ -34,12 +34,12 @@ interface problemInputAnswer {
     submitted: boolean;
 }
 // interface IcontestProps {
-//     registrationStatus: string;
+//     registrationMode: string;
 // }
 const Contest: React.FunctionComponent = () => {
     const [user, loading] = useAuthState(auth);
     const navigate = useNavigate();
-    const {id, registrationStatus} = useParams<{id: string, registrationStatus: string}>();
+    const {id, registrationMode} = useParams<{id: string, registrationMode: string}>();
     const [contest, setContest] = useState<DocumentData | null>(null);
     const [problems, setProblems] = useState<DocumentData[] | null>(null);
     const [contestLoadError, setContestLoadError] = useState(false);
@@ -117,7 +117,7 @@ const Contest: React.FunctionComponent = () => {
                     }
                 };
                 getProblems().then((props) => {
-                    if(registrationStatus == "none" && user && props?.initalAnswers){
+                    if(registrationMode == "none" && user && props?.initalAnswers){
                         const getAnswered = async() => {
                             const officialContestData = await getDocs(collection(db, "users", user.uid, "officialContests", props.contest.id, "answered"));
                             const unOfficialContestData = await getDocs(collection(db, "users", user.uid, "unofficialContests", props.contest.id, "answered"));
@@ -169,7 +169,7 @@ const Contest: React.FunctionComponent = () => {
                 }
             }
             handleInputAnswerChange("submitted", true, problem);
-            if(registrationStatus == "official"){
+            if(registrationMode == "official"){
                 setDoc(doc(db, "users", user.uid, "officialContests", contest.id, "answered", problem.name), {
                     answer: problemInput.value,
                 })
@@ -184,8 +184,7 @@ const Contest: React.FunctionComponent = () => {
     const handleContestEnd = async(contest: DocumentData) => {
         setContestEnded(true);
         setPopUp(true);
-        // console.log("doesn't happen")
-        const collectionName = registrationStatus == "official" ? "officialContests" : registrationStatus == "unofficial" ? "unofficialContests" : "";
+        const collectionName = registrationMode == "official" ? "officialContests" : registrationMode == "unofficial" ? "unofficialContests" : "";
         if(!collectionName) return;
         const correctAnswers = await getDocs(collection(db, "contests", contest.id, "problems"));
         let userAnswers = inputAnswers;
@@ -193,18 +192,19 @@ const Contest: React.FunctionComponent = () => {
             let problemData = problem.data();
             userAnswers = {...userAnswers, [problemData.name]: {...userAnswers[problemData.name], verdict: (problemData.answer == userAnswers[problemData.name].answer)}}
         })
-        // console.log("outside");
         problems.forEach(async(problem) => {
-            // console.log("it happens");
-            // console.log(userAnswers[problem.name].answer, " : ", userAnswers[problem.name].verdict)
             await setDoc(doc(db, "users", user.uid, collectionName, contest.id, "answered", problem.name), {
                 answer: userAnswers[problem.name].answer,
                 verdict: userAnswers[problem.name].verdict
             })
         })
         setInputAnswers(userAnswers);
+        await setDoc(doc(db, "contests", contest.id, "standing", user.uid), {
+            registrationMode: "official",
+            id: user.uid,
+        })
     }
-    if(ended(contest) && registrationStatus != "none"){
+    if(ended(contest) && registrationMode != "none"){
         navigate(`/contest/${id}/none`);
     }
     return (
@@ -315,7 +315,7 @@ const Contest: React.FunctionComponent = () => {
                 </TabsContent>
                 <TabsContent value="standing" className='w-full'>
                     {/* <Standing activeTab={activeTab} contest={contest}/> */}
-                    <Card>
+                    <Card className='m-0 p-0 border-border overflow-hidden'>
                         <Standing activeTab={activeTab} contest={contest}/>
                         {/* <CardHeader>
                             <CardTitle>Standing</CardTitle>

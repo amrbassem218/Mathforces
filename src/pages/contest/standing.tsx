@@ -69,6 +69,11 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
         columnVisibility,
       },
     })
+    console.log("standingData: ", data.standingData);
+    console.log("cols: ", columns)
+    console.log("rows: ", table.getRowModel().rows)
+    // console.log("cols: ", columns.)
+    // console.log("table: ", table)
     // useEffect(() => {
     //     if(activeTab == "standing"){
     //         .then((data) => {
@@ -80,12 +85,12 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
     // }, [activeTab, db])
   return (
     <div>
-      <Table>
+      <Table >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead key={header.id} className='table_element font-semibold text-base'>
                   {
                     header.isPlaceholder
                     ? null
@@ -106,7 +111,7 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((rowCell) => (
-                  <TableCell key={rowCell.id}>
+                  <TableCell key={rowCell.id} className='table_element'>
                     {flexRender(
                       rowCell.column.columnDef.cell,
                       rowCell.getContext()
@@ -115,7 +120,7 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
                 ))}
               </TableRow>
             ))
-          )
+          ) 
           : (
             <TableRow>
               <TableCell className='text-center' colSpan={columns.length}>

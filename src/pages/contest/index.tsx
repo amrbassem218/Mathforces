@@ -32,6 +32,7 @@ interface problemInputAnswer {
     answer: string | null;
     verdict: boolean | null;
     submitted: boolean;
+    timeAnswered: Date | null;
 }
 // interface IcontestProps {
 //     registrationMode: string;
@@ -49,6 +50,7 @@ const Contest: React.FunctionComponent = () => {
     const activeProblemStyle = "data-[state=active]:bg-primary data-[state=active]:text-lavender";
     const [contestEnded, setContestEnded] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState("problems");
+    const [activeProblem, setActiveProblem] = useState("");
     const [popUp, setPopUp] = useState(false);
     const handleInputAnswerChange = async(attr: string, value: string | boolean, problem: DocumentData) => {
         if(user){
@@ -106,10 +108,11 @@ const Contest: React.FunctionComponent = () => {
                         problemsSnap.forEach(async(problem) => {
                             const problemData = problem.data();
                             arr.push(problemData);
-                            initialAnswers[problemData.name] = { answer: "", submitted: false,  verdict: null};
+                            initialAnswers[problemData.name] = { answer: "", submitted: false,  verdict: null, timeAnswered: null};
                         });
                         setProblems(arr);
                         setInputAnswers(initialAnswers);
+                        setActiveProblem(arr[0].name);
                         return {problems: arr, contest: contestSnap.data(), initalAnswers: initialAnswers};
                     } else {
                         setContestLoadError(true);
@@ -117,28 +120,36 @@ const Contest: React.FunctionComponent = () => {
                     }
                 };
                 getProblems().then((props) => {
-                    if(registrationMode == "none" && user && props?.initalAnswers){
+                    if(user && props?.initalAnswers){
                         const getAnswered = async() => {
+                            // Commenting now to avoid confusion, but must add a feature to check answers of a certain contest
                             const officialContestData = await getDocs(collection(db, "users", user.uid, "officialContests", props.contest.id, "answered"));
                             const unOfficialContestData = await getDocs(collection(db, "users", user.uid, "unofficialContests", props.contest.id, "answered"));
                             let userAnswers = props.initalAnswers;
                             console.log(userAnswers);
-                            officialContestData.forEach((problem: DocumentData) => {
-                                console.log(problem.id);
-                            })
-                            officialContestData.forEach((problem: DocumentData) => {
-                                let problemData = problem.data();
-                                console.log("data: ", userAnswers[problem.id]);
-                                if(!userAnswers[problem.id].verdict){
-                                    userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict}}
-                                }
-                            })
-                            unOfficialContestData.forEach((problem: DocumentData) => {
-                                let problemData = problem.data();
-                                if(!userAnswers[problem.id].verdict){
-                                    userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict}}
-                                }
-                            })
+                            if(registrationMode == "none"){
+                                officialContestData.forEach((problem: DocumentData) => {
+                                    let problemData = problem.data();
+                                    if(!userAnswers[problem.id].verdict){
+                                        userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict, timeAnswered: problemData.timeAnswered}}
+                                    }
+                                })
+                                unOfficialContestData.forEach((problem: DocumentData) => {
+                                    let problemData = problem.data();
+                                    if(!userAnswers[problem.id].verdict){
+                                        userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict, timeAnswered: problemData.timeAnswered}}
+                                    }
+                                })
+                            }
+                            else{
+                                const registeredBasedAnswers = registrationMode == "official" ? officialContestData : unOfficialContestData;
+                                registeredBasedAnswers.forEach((problem: DocumentData) => {
+                                    let problemData = problem.data();
+                                    if(!userAnswers[problem.id].verdict){
+                                        userAnswers = {...userAnswers, [problem.id]: {answer: problemData.answer, submitted: true, verdict: problemData.verdict, timeAnswered: problemData.timeAnswered}}
+                                    }
+                                })
+                            }
                             console.log(userAnswers);
                             setInputAnswers(userAnswers);
                         }
@@ -169,16 +180,18 @@ const Contest: React.FunctionComponent = () => {
                 }
             }
             handleInputAnswerChange("submitted", true, problem);
-            if(registrationMode == "official"){
-                setDoc(doc(db, "users", user.uid, "officialContests", contest.id, "answered", problem.name), {
-                    answer: problemInput.value,
-                })
+            const now = new Date();
+            setDoc(doc(db, "users", user.uid, `${registrationMode}Contests`, contest.id, "answered", problem.name), {
+                answer: problemInput.value,
+                timeAnswered: now
+            })
+            let nextProblemIndex = problems.findIndex((e) => e.name == activeProblem);  
+            nextProblemIndex++;
+            if(nextProblemIndex == problems.length){
+                nextProblemIndex = 0;
             }
-            else{
-                setDoc(doc(db, "users", user.uid, "unofficialContests", contest.id, "answered", problem.name), {
-                    answer: problemInput.value,
-                })
-            }
+            setActiveProblem(problems[nextProblemIndex].name);
+
         }
     };
     const handleContestEnd = async(contest: DocumentData) => {
@@ -195,7 +208,8 @@ const Contest: React.FunctionComponent = () => {
         problems.forEach(async(problem) => {
             await setDoc(doc(db, "users", user.uid, collectionName, contest.id, "answered", problem.name), {
                 answer: userAnswers[problem.name].answer,
-                verdict: userAnswers[problem.name].verdict
+                verdict: userAnswers[problem.name].verdict,
+                timeAnswered: userAnswers[problem.name].timeAnswered 
             })
         })
         setInputAnswers(userAnswers);
@@ -221,7 +235,7 @@ const Contest: React.FunctionComponent = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel>Review</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => window.location.reload()}>See Standing</AlertDialogAction>
+                    <AlertDialogAction onClick={() => setActiveTab("standing")}>See Standing</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>}
@@ -233,7 +247,7 @@ const Contest: React.FunctionComponent = () => {
                     <TabsTrigger value="support" className={activeTabStyle}>Support</TabsTrigger>
                 </TabsList>
                 <TabsContent value="problems" className='w-full'>
-                    <Tabs defaultValue={problems[0].name} className="w-full">
+                    <Tabs value={activeProblem} onValueChange={setActiveProblem} className="w-full">
                         <div className='grid grid-cols-12'>
                             <div className='col-span-1'>
                                 <TabsList className='flex flex-col gap-2'>

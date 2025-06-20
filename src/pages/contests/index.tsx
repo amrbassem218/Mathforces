@@ -13,7 +13,7 @@ import { Users } from 'lucide-react';
 import path, { format } from 'path';
 import { CalendarDays } from 'lucide-react';
 import { Archive } from 'lucide-react';
-import {contestEndTime, ended, isRunnning} from "../../../utilities"
+import {contestEndTime, ended, viewDate, isRunnning, date} from "../../../utilities"
 interface IContestsProps {
 }
 
@@ -107,27 +107,13 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     }
   }
   
-  const getContestDate = (contest:DocumentData) => {
-    const contestDate = contest.date.toDate();
-    const formatter = new Intl.DateTimeFormat("en-qz", {
-      dateStyle: "full",
-      timeStyle: "short",
-    })
-    const dateParts = formatter.formatToParts(contestDate);
-    const part = (p: string) => {
-      return dateParts.find(e => e.type == p)?.value
-    }
-    let formattedDate = part("weekday")?.slice(0,3) + " " +  part("month") + "/" + part("day") + "/" +  part("year");
-    let time = part("hour") + ":" + part("minute") + part("dayPeriod");
-    // console.log(datePart);
-    return {full: formattedDate + " " + time, date: formattedDate, time: time, dateParts: dateParts, part: part};
-  }
+  
   const handleContestend = async(contest: DocumentData) => {
     // await setDoc(doc(db, "contests", contest.id), {...contest, ended: true});
     window.location.reload();
   }
   const handleDateClick = (contest: DocumentData) => {
-    const {part} = getContestDate(contest);
+    const {part} = viewDate(date(contest));
     window.open(`https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${part("dayPeriod") == "AM" ? part("hour") : (Number(part("hour"))+12).toString()}&min=${part("minute")}&sec=0`, "_blank")
   }
 
@@ -202,7 +188,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                         </div>
                         : <div className='flex gap-1 text-text/60 hover:text-text/75 items-center  cursor-pointer ' onClick={() => handleDateClick(contest)}>
                           <CalendarDays className=' w-4.5 h-4.5'/>
-                          <p className='text-text/60 hover:text-text/75 underline tracking-wide text-sm '>{getContestDate(contest).full}</p>
+                          <p className='text-text/60 hover:text-text/75 underline tracking-wide text-sm '>{viewDate(date(contest)).full}</p>
                         </div>
                         }
                       </div>
@@ -261,7 +247,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                         </div>
                         : <div className='flex gap-1 text-text/60 hover:text-text/75 items-center  cursor-pointer ' onClick={() => handleDateClick(contest)}>
                           <CalendarDays className=' w-4.5 h-4.5'/>
-                          <p className='text-text/60 hover:text-text/75 underline tracking-wide text-sm '>{getContestDate(contest).full}</p>
+                          <p className='text-text/60 hover:text-text/75 underline tracking-wide text-sm '>{viewDate(date(contest)).full}</p>
                         </div>
                         }
                       </div>

@@ -39,3 +39,22 @@ export const isRunnning = (contest: DocumentData, userId?: string) => {
     }
     return false;
 }
+
+export const viewDate = (date:Date) => {
+    const formatter = new Intl.DateTimeFormat("en-qz", {
+      dateStyle: "full",
+      timeStyle: "short",
+    })
+    const dateParts = formatter.formatToParts(date);
+    const part = (p: string) => {
+      return dateParts.find(e => e.type == p)?.value
+    }
+    let formattedDate = part("weekday")?.slice(0,3) + " " +  part("month") + "/" + part("day") + "/" +  part("year");
+    let time = part("hour") + ":" + part("minute");
+    // console.log(datePart);
+    return {full: formattedDate + " " + time, date: formattedDate, timeFull: time  + part("dayPeriod"), time: time, dateParts: dateParts, part: part};
+}
+
+export const date = (contest: DocumentData) => {
+    return contest.date.toDate();
+}

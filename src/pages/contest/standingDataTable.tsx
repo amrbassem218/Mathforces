@@ -3,7 +3,7 @@ import { db } from "../../../firebaseConfig";
 import * as React from "react";
 import { collection, doc, DocumentData, getDoc, getDocs } from "firebase/firestore";
 import { IgetStandingData, IproblemStanding, userPerformace } from "../../../types";
-import { isRunnning } from "../../../utilities";
+import { isRunnning, viewDate } from "../../../utilities";
 import { useEffect, useState } from "react";
 
 export const getStandingData = async({contest}: {contest: DocumentData}) => {
@@ -21,9 +21,6 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
             let userProblemSolved: Record<string, IproblemStanding> = {};
             let totalScore = 0;
             let username = (await getDoc(doc(db, "users", user.id))).data()?.username;
-            if(isRunnning(contest, user.id)){
-                
-            }
             userProblemSolvedSnap.forEach((problemSolved) => {
                 const problemSolvedData = problemSolved.data();
                 userProblemSolved[problemSolved.id] = {
@@ -31,16 +28,19 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
                     verdict: problemSolvedData.verdict,
                     timeAnswered: problemSolvedData.timeAnswered,
                 }
-                // let dateAnswered = problemSolvedData.timeAnswered.getTime() - contest.date.getTime();
-                // let timeAnsweredInHours = dateAnswered / 1000 / 60 / 60;  
-                // totalScore += ((10*(problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours);
+                let problemDateAnswered = problemSolvedData.timeAnswered.toDate();
+                let contestStartDate = contest.date.toDate();
+                let dateAnswered = problemDateAnswered.getTime() - contestStartDate.getTime();
+                let timeAnsweredInHours = dateAnswered / 1000 / 60 / 60;
+                console.log("time: ", timeAnsweredInHours);  
+                totalScore += ((10*(problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours);
             })
             let userStandingPerformance: userPerformace = {
                 username: username,
                 registrationMode: userStandingData.registrationMode,
                 userId: user.id,
                 problems: userProblemSolved,
-                total: 0,
+                total: Math.round(totalScore),
             }
             return userStandingPerformance;
         })
@@ -74,7 +74,8 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
                 cell:({row}: {row: Row<userPerformace>}) => {
                     const rowData = row.original as userPerformace;
                     const problemData = rowData.problems[problem];
-                    return (<p className={`text-center ${problemData?.verdict == true ? "text-green-600" : problemData?.verdict == false ? "text-red-600" : ""}`}>{problemData?.answer ?? ""}</p>)
+                    const showAnsweredTime = viewDate(problemData.timeAnswered).time;
+                    return (<p className={`text-center ${problemData?.verdict == true ? "text-green-600" : problemData?.verdict == false ? "text-red-600" : ""}`}>{showAnsweredTime ?? ""}</p>)
                 }
                 
             }

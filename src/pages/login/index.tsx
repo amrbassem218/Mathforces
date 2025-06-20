@@ -24,8 +24,7 @@ export function Login() {
     const [password, setPassword] = useState<string>("");
     const { login, logInWithGoogle, logInWithGithub } = useAuthUserContext();
     const navigate = useNavigate();
-    const [loading] = useAuthState(auth);
-
+    const [user,loading] = useAuthState(auth);
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!email) {
@@ -95,7 +94,7 @@ export function Login() {
     }, [userError]);
 
     if(loading) {
-        return <div></div>;
+        return <div>Loading...</div>;
     }
 
     return (

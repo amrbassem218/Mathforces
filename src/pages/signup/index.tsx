@@ -21,7 +21,7 @@ import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
 
 export function Signup() {
-  const [loading] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [userError, setUserError] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [userName, setUserName] = useState<string>("");
@@ -164,7 +164,7 @@ export function Signup() {
       }
     },[password])
     if(loading){
-    return <div>loading...</div>;
+      return <div>loading... </div>;
   }
   return (
     <div className="flex flex-col min-h-screen w-full">

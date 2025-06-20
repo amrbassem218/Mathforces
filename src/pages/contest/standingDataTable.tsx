@@ -28,12 +28,14 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
                     verdict: problemSolvedData.verdict,
                     timeAnswered: problemSolvedData.timeAnswered,
                 }
-                let problemDateAnswered = problemSolvedData.timeAnswered.toDate();
-                let contestStartDate = contest.date.toDate();
-                let dateAnswered = problemDateAnswered.getTime() - contestStartDate.getTime();
-                let timeAnsweredInHours = dateAnswered / 1000 / 60 / 60;
-                console.log("time: ", timeAnsweredInHours);  
-                totalScore += ((10*(problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours);
+                if(problemSolvedData.timeAnswered){
+                    let problemDateAnswered = problemSolvedData.timeAnswered.toDate();
+                    let contestStartDate = contest.date.toDate();
+                    let dateAnswered = problemDateAnswered.getTime() - contestStartDate.getTime();
+                    let timeAnsweredInHours = dateAnswered / 1000 / 60 / 60;
+                    console.log("time: ", timeAnsweredInHours);  
+                    totalScore += ((10*(problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours);
+                }
             })
             let userStandingPerformance: userPerformace = {
                 username: username,
@@ -74,7 +76,7 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
                 cell:({row}: {row: Row<userPerformace>}) => {
                     const rowData = row.original as userPerformace;
                     const problemData = rowData.problems[problem];
-                    const showAnsweredTime = viewDate(problemData.timeAnswered).time;
+                    const showAnsweredTime = problemData.timeAnswered ? viewDate(problemData.timeAnswered).time : "no record";
                     return (<p className={`text-center ${problemData?.verdict == true ? "text-green-600" : problemData?.verdict == false ? "text-red-600" : ""}`}>{showAnsweredTime ?? ""}</p>)
                 }
                 

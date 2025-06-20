@@ -191,7 +191,6 @@ const Contest: React.FunctionComponent = () => {
                 nextProblemIndex = 0;
             }
             setActiveProblem(problems[nextProblemIndex].name);
-
         }
     };
     const handleContestEnd = async(contest: DocumentData) => {
@@ -283,6 +282,7 @@ const Contest: React.FunctionComponent = () => {
                                                             id={`${problem.name}-answer`} 
                                                             placeholder='Enter Your Answer' 
                                                             value={inputAnswers[problem.name]?.answer || ""} 
+                                                            autoFocus
                                                             className="w-96" 
                                                             onChange={(e) => handleInputAnswerChange("answer", e.target.value, problem)}
                                                         />

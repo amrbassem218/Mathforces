@@ -25,11 +25,11 @@ export interface IproblemStanding{
     answer: string;
     verdict: boolean | null;
     timeAnswered: string | null;
-
 }
 export interface userPerformace {
     username: string;
     userId: string;
+    ranking: number;
     registrationMode: string;
     problems: {
         [key: string]: IproblemStanding;

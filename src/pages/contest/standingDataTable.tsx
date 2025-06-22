@@ -1,10 +1,12 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
+import { Column, ColumnDef, Row } from "@tanstack/react-table";
 import { db } from "../../../firebaseConfig";
 import * as React from "react";
 import { collection, doc, DocumentData, getDoc, getDocs } from "firebase/firestore";
 import { IgetStandingData, IproblemStanding, userPerformace } from "../../../types";
 import { isRunnning, viewDate, viewTime } from "../../../utilities";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 
 export const getStandingData = async({contest}: {contest: DocumentData}) => {
     let standingData: userPerformace[] = [];
@@ -42,6 +44,7 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
                 timeAnsweredFormatted = "";
             })
             let userStandingPerformance: userPerformace = {
+                ranking: 0,
                 username: username,
                 registrationMode: userStandingData.registrationMode,
                 userId: user.id,
@@ -57,14 +60,15 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
 export const getColumns = ({standingData, problemsList}: IgetStandingData): ColumnDef<userPerformace>[] => {
     return [
         {
-            id: "rank",
+            id: "ranking",
+            accessorKey: "ranking",
             header: () => (<p className="text-center">#</p>),
             cell: ({row}) => (
-                <p>{row.index}</p>
+                <p>{row.getValue("ranking")}</p>
             ),
             footer: `${standingData.length}`,
-            enableHiding: false,
-            enableSorting: false
+            // enableHiding: false,
+            // enableSorting: false
         },
         {
             accessorKey: "username",
@@ -76,7 +80,17 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
         ...problemsList.map((problem) => (
             {
                 id: problem,
-                header: () => (<p className="text-center">{problem}</p>),
+                header: ({column}: {column: Column<userPerformace>}) => (
+                <p className="text-center">{problem}</p>
+                // <Button
+                //     variant="ghost"
+                //     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                //     className="m-0 p-0 font-semibold"
+                //     >
+                //     {problem}
+                //     <ArrowUpDown />
+                // </Button>
+            ),
                 cell:({row}: {row: Row<userPerformace>}) => {
                     const rowData = row.original as userPerformace;
                     const problemData = rowData.problems[problem];
@@ -89,10 +103,20 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
         {
             id: "total",
             accessorKey: "total",
-            header:  () => (<p className="text-center">Total</p>),
+            header:  ({column}) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="mx-auto"
+                    >
+                    Total
+                    <ArrowUpDown />
+                </Button>
+            ),
             cell: ({row}) => (
                 <h2>{row.getValue("total")}</h2>
-            )
+            ),
+            enableSorting: true
         }
         ]
 } 
@@ -104,7 +128,13 @@ export const useGetStanding = ({contest} : {contest:DocumentData}) => {
         getStandingData({contest}).then((props) => {
             setData(props);
             console.log(props.problemsList);
-            setColumns(getColumns(props))
+            props.standingData.sort((a,b) => {
+                return b.total - a.total;
+            })
+            props.standingData.forEach((e, i) => {
+                e.ranking = i + 1;
+            })
+            setColumns(getColumns(props));
         })
     }, [])
     return {data, columns};

@@ -24,7 +24,8 @@ export interface IrenderComponent{
 export interface IproblemStanding{
     answer: string;
     verdict: boolean | null;
-    timeAnswered: Date;
+    timeAnswered: string | null;
+
 }
 export interface userPerformace {
     username: string;

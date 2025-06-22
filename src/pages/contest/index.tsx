@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Header from '@/components/ui/Header';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
-import { collection, doc, DocumentData, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, DocumentData, getDoc, getDocs, setDoc, Timestamp } from 'firebase/firestore';
 import 'katex/dist/katex.min.css';
 import * as React from 'react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
@@ -52,7 +52,7 @@ const Contest: React.FunctionComponent = () => {
     const [activeTab, setActiveTab] = useState("problems");
     const [activeProblem, setActiveProblem] = useState("");
     const [popUp, setPopUp] = useState(false);
-    const handleInputAnswerChange = async(attr: string, value: string | boolean, problem: DocumentData) => {
+    const handleInputAnswerChange = async(attr: string, value: any, problem: DocumentData) => {
         if(user){
             setInputAnswers(prev => ({
                 ...prev,
@@ -179,12 +179,13 @@ const Contest: React.FunctionComponent = () => {
                     handleInputAnswerChange("verdict", false, problem);
                 }
             }
+            let problemTimeAnswered = Timestamp.now();
             handleInputAnswerChange("submitted", true, problem);
-            const now = new Date();
+            handleInputAnswerChange("timeAnswered", problemTimeAnswered, problem);
             setDoc(doc(db, "users", user.uid, `${registrationMode}Contests`, contest.id, "answered", problem.name), {
                 answer: problemInput.value,
-                timeAnswered: now
-            })
+                timeAnswered: problemTimeAnswered
+            }, {merge: true})
             let nextProblemIndex = problems.findIndex((e) => e.name == activeProblem);  
             nextProblemIndex++;
             if(nextProblemIndex == problems.length){
@@ -194,10 +195,6 @@ const Contest: React.FunctionComponent = () => {
         }
     };
     const handleContestEnd = async(contest: DocumentData) => {
-        setContestEnded(true);
-        setPopUp(true);
-        const collectionName = registrationMode == "official" ? "officialContests" : registrationMode == "unofficial" ? "unofficialContests" : "";
-        if(!collectionName) return;
         const correctAnswers = await getDocs(collection(db, "contests", contest.id, "problems"));
         let userAnswers = inputAnswers;
         correctAnswers.forEach((problem) => {
@@ -205,21 +202,22 @@ const Contest: React.FunctionComponent = () => {
             userAnswers = {...userAnswers, [problemData.name]: {...userAnswers[problemData.name], verdict: (problemData.answer == userAnswers[problemData.name].answer)}}
         })
         problems.forEach(async(problem) => {
-            await setDoc(doc(db, "users", user.uid, collectionName, contest.id, "answered", problem.name), {
-                answer: userAnswers[problem.name].answer,
+            await setDoc(doc(db, "users", user.uid, `${registrationMode}Contests`, contest.id, "answered", problem.name), {
                 verdict: userAnswers[problem.name].verdict,
-                timeAnswered: userAnswers[problem.name].timeAnswered 
-            })
+            }, {merge: true})
         })
+        console.log("contestEnd happend");
         setInputAnswers(userAnswers);
         await setDoc(doc(db, "contests", contest.id, "standing", user.uid), {
             registrationMode: "official",
             id: user.uid,
         })
+        setContestEnded(true);
+        setPopUp(true);
     }
-    if(ended(contest) && registrationMode != "none"){
-        navigate(`/contest/${id}/none`);
-    }
+    // if(ended(contest) && registrationMode != "none"){
+    //     navigate(`/contest/${id}/none`);
+    // }
     return (
         <>
         <Header login={"full"} signup={"outline"}/>

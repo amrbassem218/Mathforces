@@ -51,7 +51,7 @@ export function Signup() {
               ranking: "Beginner",
               rating: 1000,
             })
-            sendEmailVerification(cred.user).then(() => {
+              sendEmailVerification(cred.user).then(() => {
               setEmailVerificationSent(true);
             })
             .catch((error) => {console.error(error); console.log("error here in ver")});

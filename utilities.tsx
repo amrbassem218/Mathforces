@@ -54,7 +54,19 @@ export const viewDate = (date:Date) => {
     // console.log(datePart);
     return {full: formattedDate + " " + time, date: formattedDate, timeFull: time  + part("dayPeriod"), time: time, dateParts: dateParts, part: part};
 }
-
+export const viewTime = (duration: number) => {
+    const totalSeconds = Math.floor(duration / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600)  / 60); 
+    const seconds = totalSeconds % 60;
+    let hoursFormatted = `${String(hours).padStart(2,'0')}`
+    let minutesFormatted = `${String(minutes).padStart(2,'0')}`;
+    let secondsFormatted = `${String(seconds).padStart(2,'0')}`;
+    let hoursAndMinutes = `${hoursFormatted}:${minutesFormatted}`;
+    let minutesAndSeconds = `${minutesFormatted}:${secondsFormatted}`;
+    let full = `${hoursFormatted}:${minutesFormatted}:${secondsFormatted}`;
+    return {hoursAndMinutes, minutesAndSeconds, full}
+}
 export const date = (contest: DocumentData) => {
     return contest.date.toDate();
 }

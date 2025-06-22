@@ -50,7 +50,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     }
     if(user){
       const getRegisteredContests = async() => {
-        const registeredContestsSnap = await getDocs(collection(db, "users", user.uid, "contests"))
+        const registeredContestsSnap = await getDocs(collection(db, "users", user.uid, "officialContests"))
         let registeredContestsTemp:DocumentData[] = [];
         registeredContestsSnap.forEach((contest) => {
           const contestData = contest.data();
@@ -75,15 +75,13 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   }, [db, user])
   const handleNewRegister = async(contest: DocumentData) => {
     if(user){
-      await setDoc(doc(db, "users", user.uid, "contests", contest.id), {
+      await setDoc(doc(db, "users", user.uid, "officialContests", contest.id), {
         name: contest.name,
         id: contest.id,
-        answered: []
-      })
+      }, {merge: true})
       await setDoc(doc(db, "contests", contest.id), {
-        ...contest,
         registered: contest.registered + 1
-      })
+      }, {merge: true})
       if(registeredContests){
         setRegisteredContests([...registeredContests, contest])
       }
@@ -129,12 +127,10 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
       await setDoc(doc(db, "users", user.uid, "unofficialContests", contest.id), {
         name: contest.name,
         id: contest.id,
-        answered: []
-      })
+      }, {merge: true})
       await setDoc(doc(db, "contests", contest.id), {
-        ...contest,
         unofficiallyRegistered: contest.unofficiallyRegistered + 1
-      })
+      }, {merge: true})
       if(unofficiallyRegisteredContests){
         setUnofficiallyRegisteredContests([...unofficiallyRegisteredContests, contest])
       }

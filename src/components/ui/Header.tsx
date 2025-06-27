@@ -5,6 +5,7 @@ import { auth, db } from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { doc, DocumentData, getDoc } from 'firebase/firestore';
 import { useState,useEffect } from 'react';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@radix-ui/react-hover-card';
 interface IHeaderProps {
     login: string | null;
     signup:string | null;
@@ -31,9 +32,29 @@ const Header: React.FunctionComponent<IHeaderProps> = (props) => {
         <h1 className="logo text-3xl" onClick={() => navigate("/")}>Mathforces</h1>
         <nav>
           <ul className="flex gap-10">
-            <li className="hover:font-medium" onClick={() => navigate("/contests")}><a href="">Contests</a></li>
-            <li className="hover:font-medium "><a href="" onClick={() => navigate("/problemset")}>Problemset</a></li>
-            <li className="hover:font-medium"><a href="" onClick={() => navigate("/ranking")}>Ranking</a></li>
+            <li className="hover:font-medium" >
+              <Button variant={'link'} className='text-md text-text font-normal' onClick={() => navigate("/contests")}>Contests</Button>
+            </li>
+            <li className="hover:font-medium" >
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Button disabled variant={'link'} className='text-md text-text font-normal cursor-not-allowed' onClick={() => navigate("/problemset")}>Problemset</Button>
+                </HoverCardTrigger>
+                <HoverCardContent className='w-60 h-10 bg-background border-1 border-border flex items-center justify-center rounded-md animate-pulse'>
+                  <p>Under Construction</p>
+                </HoverCardContent>
+              </HoverCard>
+            </li>
+            <li className="hover:font-medium">
+              <HoverCard>
+                <HoverCardTrigger>
+                  <Button disabled variant={'link'} className='text-md text-text font-normal cursor-not-allowed' onClick={() => navigate("/ranking")}>Ranking</Button>
+                </HoverCardTrigger>
+                <HoverCardContent className='w-60 h-10 bg-background border-1 border-border flex items-center justify-center rounded-md animate-pulse'>
+                  <p>Under Construction</p>
+                </HoverCardContent>
+              </HoverCard>
+            </li>
           </ul>
         </nav>
         {(user && data &&

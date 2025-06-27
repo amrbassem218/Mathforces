@@ -48,30 +48,25 @@ export interface IStandingProps {
 const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest}) => {
     const {data, columns} = useGetStanding({contest});
     const [standing, setStanding] = useState<IuseGetStanding>();
-    // const [columns, setColumns] = useState<ColumnDef<userPerformace>[]>([]);
-    // const [data, setData] = useState<userPerformace[]>([]);
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const table = useReactTable({
-      data: data.standingData,
-      columns: columns,
-      onSortingChange: setSorting,
-      onColumnFiltersChange: setColumnFilters,
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      onColumnVisibilityChange: setColumnVisibility,
-      state: {
-        sorting,
-        columnFilters,
-        columnVisibility,
-      },
-    })
-    console.log("standingData: ", data.standingData);
-    console.log("cols: ", columns)
-    console.log("rows: ", table.getRowModel().rows)
+    data: data.standingData,
+    columns: columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+    },
+  })
     // console.log("cols: ", columns.)
     // console.log("table: ", table)
     // useEffect(() => {
@@ -85,6 +80,13 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
     // }, [activeTab, db])
   return (
     <div>
+      <div>
+        <Input
+          placeholder='Search for ...'
+          value={(table.getColumn("username")?.getFilterValue() as string ?? "")}
+          onChange={(e) => table.getColumn("username")?.setFilterValue(e.target.value)}
+          className='max-w-sm'/>
+      </div>
       <Table >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

@@ -113,6 +113,9 @@
   .table_element{
     @apply border-border border-1 rounded-md 
   }
+  .rule span {
+    @apply font-semibold
+  }
 }
 
 /* Add these styles for latex.js content */

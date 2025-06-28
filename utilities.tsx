@@ -70,3 +70,40 @@ export const viewTime = (duration: number) => {
 export const date = (contest: DocumentData) => {
     return contest.date.toDate();
 }
+
+export const formattedRule = (rule: string) => {
+    let count = 0;
+    let res: React.ReactNode[] = [];
+    let spanText = "";
+    let currentText = "";
+    let flag = false;
+
+    for (let ch of rule) {
+        if (ch === '*') {
+            count++;
+            if (count === 2) {
+                count = 0;
+                flag = !flag;
+                if (flag) {
+                    res.push(currentText);
+                    currentText = "";
+                } else {
+                    res.push(<span key={res.length}>{spanText}</span>);
+                    spanText = "";
+                }
+            }
+            continue;
+        }
+
+        if (flag) {
+            spanText += ch;
+        } else {
+            currentText += ch;
+        }
+    }
+
+    if (currentText) res.push(currentText);
+    if (spanText) res.push(<span key={res.length}>{spanText}</span>);
+
+    return <>{res}</>;
+};

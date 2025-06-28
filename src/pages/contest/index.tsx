@@ -28,6 +28,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Standing from './standing';
+import Editorials from './editorials';
+import SideBar from './sidebar';
 interface problemInputAnswer {
     answer: string | null;
     verdict: boolean | null;
@@ -215,9 +217,9 @@ const Contest: React.FunctionComponent = () => {
         setContestEnded(true);
         setPopUp(true);
     }
-    // if(ended(contest) && registrationMode != "none"){
-    //     navigate(`/contest/${id}/none`);
-    // }
+    if(ended(contest) && registrationMode != "none"){
+        navigate(`/contest/${id}/none`);
+    }
     return (
         <>
         <Header login={"full"} signup={"outline"}/>
@@ -245,7 +247,7 @@ const Contest: React.FunctionComponent = () => {
                 </TabsList>
                 <TabsContent value="problems" className='w-full'>
                     <Tabs value={activeProblem} onValueChange={setActiveProblem} className="w-full">
-                        <div className='grid grid-cols-12'>
+                        <div className='grid grid-cols-12 gap-2Z'>
                             <div className='col-span-1'>
                                 <TabsList className='flex flex-col gap-2'>
                                     {problems.map((problem) =>( 
@@ -259,7 +261,6 @@ const Contest: React.FunctionComponent = () => {
                                     ))}
                                 </TabsList>
                             </div>
-
                             <div className='col-span-7'>
                                 {problems.map((problem) =>(
                                     <TabsContent key={problem.name} value={problem.name}>
@@ -310,8 +311,9 @@ const Contest: React.FunctionComponent = () => {
                                     </TabsContent>
                                 ))}
                             </div>
-                            <div className='col-span-4 border-2 border-black'>
-                                <div>
+                            <div className='col-span-4 '>
+                                <SideBar/>
+                                {/* <div>
                                     <p>
                                         {!ended(contest) ? <Countdown date={contestEndTime(contest)} onComplete={() => handleContestEnd(contest)} renderer={({hours, minutes, seconds, completed}) => 
                                         completed ? <p>Time's up!!</p> : ` ${String(hours).padStart(2, '0')}:
@@ -320,27 +322,22 @@ const Contest: React.FunctionComponent = () => {
                                          }/> : "Time's up"}
                                     
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </Tabs>
                 </TabsContent>
                 <TabsContent value="standing" className='w-full'>
-                    {/* <Standing activeTab={activeTab} contest={contest}/> */}
                     <Card className='m-0 p-0 border-border overflow-hidden'>
                         <Standing activeTab={activeTab} contest={contest}/>
-                        {/* <CardHeader>
-                            <CardTitle>Standing</CardTitle>
-                            <CardDescription>
-                                Standing includes trusted participants at the time of contest.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <p>Nobody at contest</p>
-                        </CardContent>
-                        <CardFooter>
-                        </CardFooter> */}
                     </Card>
+                </TabsContent>
+                <TabsContent value="editorials" className='w-full'>
+                    <div className='w-full flex justify-center'>
+                        <Editorials contest={contest} problems={problems}/>
+                        {/* <div className='col-span-9 col-start-2'>
+                        </div> */}
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

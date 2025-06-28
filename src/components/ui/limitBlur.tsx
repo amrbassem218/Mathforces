@@ -24,7 +24,7 @@ const LimitBlur: React.FunctionComponent<ILimitBlurProps> = ({content, height, f
             {content}
             {readmore == false ?
             <>
-                <div className={`absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t ${fromColor ? fromColor : "from-background"} dark:from-black ${toColor ? toColor : "to-transparent"} pointer-events-none`} />
+                <div className={`absolute bottom-0 left-0 w-full h-15 bg-gradient-to-t ${fromColor ? fromColor : "from-background"} dark:from-black ${toColor ? toColor : "to-transparent"} pointer-events-none`} />
                 <div className={`absolute ${buttonPlacement ? buttonPlacement : "top-3"} flex justify-center w-full z-10`}>
                     <Button variant={'link'} className={`underline m-0 p-0 top-0 ${buttonStyle}`} onClick={() => setReadmore(!readmore)}>{readmore ? "Show less" : "Show more"}</Button>
                 </div>

@@ -14,7 +14,7 @@ import { lineDescription } from 'types';
 import { auth, db } from '../../../firebaseConfig';
 import Error from '../error';
 import Countdown from 'react-countdown';
-import {contestEndTime, ended} from "../../../utilities"
+import {contestEndTime, ended, isRunnning} from "../../../utilities"
 import { User } from 'firebase/auth';
 import {
   AlertDialog,
@@ -188,12 +188,14 @@ const Contest: React.FunctionComponent = () => {
                 answer: problemInput.value,
                 timeAnswered: problemTimeAnswered
             }, {merge: true})
-            let nextProblemIndex = problems.findIndex((e) => e.name == activeProblem);  
-            nextProblemIndex++;
-            if(nextProblemIndex == problems.length){
-                nextProblemIndex = 0;
+            if(isRunnning(contest)){
+                let nextProblemIndex = problems.findIndex((e) => e.name == activeProblem);  
+                nextProblemIndex++;
+                if(nextProblemIndex == problems.length){
+                    nextProblemIndex = 0;
+                }
+                setActiveProblem(problems[nextProblemIndex].name);
             }
-            setActiveProblem(problems[nextProblemIndex].name);
         }
     };
     const handleContestEnd = async(contest: DocumentData) => {
@@ -220,6 +222,7 @@ const Contest: React.FunctionComponent = () => {
     if(ended(contest) && registrationMode != "none"){
         navigate(`/contest/${id}/none`);
     }
+    
     return (
         <>
         <Header login={"full"} signup={"outline"}/>
@@ -314,7 +317,7 @@ const Contest: React.FunctionComponent = () => {
                                 </div>
                             </div>
                             <div className='col-span-4 '>
-                                <SideBar/>
+                                <SideBar contest={contest} handleContestEnd={handleContestEnd}/>
                             </div>
                         </div>
                     </Tabs>
@@ -336,4 +339,5 @@ const Contest: React.FunctionComponent = () => {
         </>
     );
 };
+
 export default Contest;

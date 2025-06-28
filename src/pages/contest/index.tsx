@@ -247,82 +247,74 @@ const Contest: React.FunctionComponent = () => {
                 </TabsList>
                 <TabsContent value="problems" className='w-full'>
                     <Tabs value={activeProblem} onValueChange={setActiveProblem} className="w-full">
-                        <div className='grid grid-cols-12 gap-2Z'>
-                            <div className='col-span-1'>
-                                <TabsList className='flex flex-col gap-2'>
-                                    {problems.map((problem) =>( 
-                                        <TabsTrigger key={problem.name} value={problem.name} className={`${activeProblemStyle} rounded-full w-12 h-12 border-border border-1 font-bold text-text/55
-                                        ${problemStatuses[problem.name] === true ? "bg-green-300" :
-                                            problemStatuses[problem.name] === false ? "bg-red-300" : 
-                                            inputAnswers[problem.name].submitted ? "bg-text/50" : ""}
-                                        `}>
-                                            {problem.name}
-                                        </TabsTrigger>
+                        <div className='grid grid-cols-12 gap-12'>
+                            <div className='col-span-8 grid grid-cols-14'>
+                                <div className='col-span-2'>
+                                    <TabsList className='flex flex-col gap-2'>
+                                        {problems.map((problem) =>( 
+                                            <TabsTrigger key={problem.name} value={problem.name} className={`${activeProblemStyle} rounded-full w-12 h-12 border-border border-1 font-bold text-text/55
+                                            ${problemStatuses[problem.name] === true ? "bg-green-300" :
+                                                problemStatuses[problem.name] === false ? "bg-red-300" : 
+                                                inputAnswers[problem.name].submitted ? "bg-text/50" : ""}
+                                            `}>
+                                                {problem.name}
+                                            </TabsTrigger>
+                                        ))}
+                                    </TabsList>
+                                </div>
+                                <div className='col-span-12'>
+                                    {problems.map((problem) =>(
+                                        <TabsContent key={problem.name} value={problem.name}>
+                                            <h1 className='text-2xl font-semibold mb-2'>Problem {problem.name}</h1>
+                                            <div className='flex flex-col gap-15'>
+                                                <Card className='border-border'>
+                                                    <CardContent className='text-lg/8 w-full max-w-full'>
+                                                        <div style={{ whiteSpace: 'pre-wrap' }}>
+                                                            <>
+                                                            {problem.description.map((e: lineDescription, i: number) => {
+                                                                return renderComponent({lineDescription: e, key: i.toString()});
+                                                            })}
+                                                            </>
+                                                        </div>
+                                                        <form onSubmit={(e) => {e.preventDefault(); return  handleProblemSubmit(problem)}} className='flex items-center gap-2 m-3 mt-7'>
+                                                            <Input 
+                                                                type="text" 
+                                                                id={`${problem.name}-answer`} 
+                                                                placeholder='Enter Your Answer' 
+                                                                value={inputAnswers[problem.name]?.answer || ""} 
+                                                                autoFocus
+                                                                className="w-96" 
+                                                                onChange={(e) => handleInputAnswerChange("answer", e.target.value, problem)}
+                                                            />
+                                                            <Button type="submit" className="col-span-2">Submit</Button>
+                                                        </form>
+                                                    </CardContent>
+                                                </Card>
+                                                
+                                                {problemStatuses[problem.name] === true ?
+                                                    <Card className='border-green-400'>
+                                                        <CardTitle className='font-bold text-green-600 text-2xl'>Correct Answer</CardTitle>
+                                                        <CardContent>
+                                                            <h2>Explanation:</h2>
+                                                            <p>{problem.editorial}</p>
+                                                        </CardContent>
+                                                    </Card>
+                                                : problemStatuses[problem.name] === false ? 
+                                                    <Card className='border-red-400'>
+                                                        <CardTitle className='font-bold text-red-600 text-2xl'>Wrong Answer</CardTitle>
+                                                        <CardContent>
+                                                            <h2>Try once more</h2>
+                                                            <p>or see the editorial</p>
+                                                        </CardContent>
+                                                    </Card>
+                                                : null}
+                                            </div>
+                                        </TabsContent>
                                     ))}
-                                </TabsList>
-                            </div>
-                            <div className='col-span-7'>
-                                {problems.map((problem) =>(
-                                    <TabsContent key={problem.name} value={problem.name}>
-                                        <h1 className='text-2xl font-semibold mb-2'>Problem {problem.name}</h1>
-                                        <div className='flex flex-col gap-15'>
-                                            <Card className='border-border'>
-                                                <CardContent className='text-lg/8 w-full max-w-full'>
-                                                    <div style={{ whiteSpace: 'pre-wrap' }}>
-                                                        <>
-                                                        {problem.description.map((e: lineDescription, i: number) => {
-                                                            return renderComponent({lineDescription: e, key: i.toString()});
-                                                        })}
-                                                        </>
-                                                    </div>
-                                                    <form onSubmit={(e) => {e.preventDefault(); return  handleProblemSubmit(problem)}} className='flex items-center gap-2 m-3 mt-7'>
-                                                        <Input 
-                                                            type="text" 
-                                                            id={`${problem.name}-answer`} 
-                                                            placeholder='Enter Your Answer' 
-                                                            value={inputAnswers[problem.name]?.answer || ""} 
-                                                            autoFocus
-                                                            className="w-96" 
-                                                            onChange={(e) => handleInputAnswerChange("answer", e.target.value, problem)}
-                                                        />
-                                                        <Button type="submit" className="col-span-2">Submit</Button>
-                                                    </form>
-                                                </CardContent>
-                                            </Card>
-                                            
-                                            {problemStatuses[problem.name] === true ?
-                                                <Card className='border-green-400'>
-                                                    <CardTitle className='font-bold text-green-600 text-2xl'>Correct Answer</CardTitle>
-                                                    <CardContent>
-                                                        <h2>Explanation:</h2>
-                                                        <p>{problem.editorial}</p>
-                                                    </CardContent>
-                                                </Card>
-                                            : problemStatuses[problem.name] === false ? 
-                                                <Card className='border-red-400'>
-                                                    <CardTitle className='font-bold text-red-600 text-2xl'>Wrong Answer</CardTitle>
-                                                    <CardContent>
-                                                        <h2>Try once more</h2>
-                                                        <p>or see the editorial</p>
-                                                    </CardContent>
-                                                </Card>
-                                            : null}
-                                        </div>
-                                    </TabsContent>
-                                ))}
+                                </div>
                             </div>
                             <div className='col-span-4 '>
                                 <SideBar/>
-                                {/* <div>
-                                    <p>
-                                        {!ended(contest) ? <Countdown date={contestEndTime(contest)} onComplete={() => handleContestEnd(contest)} renderer={({hours, minutes, seconds, completed}) => 
-                                        completed ? <p>Time's up!!</p> : ` ${String(hours).padStart(2, '0')}:
-                                                                        ${String(minutes).padStart(2, '0')}:
-                                                                        ${String(seconds).padStart(2, '0')}`
-                                         }/> : "Time's up"}
-                                    
-                                    </p>
-                                </div> */}
                             </div>
                         </div>
                     </Tabs>

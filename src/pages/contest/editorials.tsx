@@ -51,9 +51,9 @@ const Editorials: React.FunctionComponent<EditorialsProps> = ({problems, contest
                   }</h2> 
                   <h2 className='font-semibold'>Answer: <span className='font-normal'>{problem.answer}</span></h2>
                   <h2 className='font-semibold'>Explanation: </h2>
-                  {problem?.editorial 
+                  {problem?.explanation.description 
                   ? <>
-                      {problem.editorial.map((e: lineDescription, i: number) => (
+                      {problem.explanation.description.map((e: lineDescription, i: number) => (
                         renderComponent({lineDescription: e, key: i.toString()})
                       ))}
                     </>

@@ -49,6 +49,69 @@ const processLatex = (content: string): lineDescription[] => {
             expression: String.raw`${lines[i]}`
           };
         }
+        else if(lines[i].includes("\\begin{equation}")){
+            // Convert equation environment to display math
+            processed = {
+                blockType: "katex",
+                expression: "$$"
+            };
+        }
+        else if(lines[i].includes("\\end{equation}")){
+            processed = {
+                blockType: "katex",
+                expression: "$$"
+            };
+        }
+        else if(lines[i].includes("\\begin{lemma}") || lines[i].includes("\\begin{proof}")){
+            // Skip lemma and proof environments for now
+            processed = {
+                blockType: "katex",
+                expression: ""
+            };
+        }
+        else if(lines[i].includes("\\end{lemma}") || lines[i].includes("\\end{proof}")){
+            // Skip lemma and proof environments for now
+            processed = {
+                blockType: "katex",
+                expression: ""
+            };
+        }
+        else if(lines[i].includes("\\qedhere")){
+            // Skip qedhere
+            processed = {
+                blockType: "katex",
+                expression: ""
+            };
+        }
+        else if(lines[i].includes("\\setcounter")){
+            // Skip setcounter commands
+            processed = {
+                blockType: "katex",
+                expression: ""
+            };
+        }
+        else if(lines[i].includes("\\label{eq:")){
+            // Skip label commands
+            processed = {
+                blockType: "katex",
+                expression: ""
+            };
+        }
+        else if(lines[i].includes("\\eqref{eq:")){
+            // Convert eqref to simple reference
+            const match = lines[i].match(/\\eqref\{eq:([^}]+)\}/);
+            if(match) {
+                processed = {
+                    blockType: "katex",
+                    expression: `(${match[1]})`
+                };
+            } else {
+                processed = {
+                    blockType: "katex",
+                    expression: String.raw`${lines[i]}`
+                };
+            }
+        }
         else if(lines[i].includes("\\end")){
             processed = {
               blockType: "katex",
@@ -57,8 +120,8 @@ const processLatex = (content: string): lineDescription[] => {
         }
         else{
             processed = {
-              blockType: "katex",
-              expression: String.raw`${lines[i]}`
+                blockType: "katex",
+                expression: String.raw`${lines[i]}`
             };
         }
         problemDescription.push(processed);
@@ -79,8 +142,17 @@ export const useProblems = ({formattedTex}: IuseProblemsProps)=> {
                 let flag = false;
                 let curProblem = "";
                 let currentProblemName = "";
+                let itemizeDepth = 0;
                 for (const ln of lines) {
-                    if(ln.includes("end{itemize")) break;
+                    if(ln.includes("\\begin{itemize")) {
+                        itemizeDepth++;
+                    }
+                    if(ln.includes("\\end{itemize")) {
+                        itemizeDepth--;
+                        if(itemizeDepth === 0) {
+                            break;
+                        }
+                    }
                     if (ln.slice(0, 6) === "\\item[" && ln[8] === "]") {
                         if (currentProblemName && curProblem) {
                             parsedProblems[currentProblemName] = {
@@ -91,7 +163,8 @@ export const useProblems = ({formattedTex}: IuseProblemsProps)=> {
                         }
 
                         currentProblemName = ln.slice(6, 8);
-                        curProblem = ln.slice(ln.indexOf(']')+1) + "\n"
+                        const contentAfterBracket = ln.slice(ln.indexOf(']')+1).trim();
+                        curProblem = contentAfterBracket ? contentAfterBracket + "\n" : "";
                         flag = true;
                       }
                       else if(flag){

@@ -5,7 +5,9 @@ import { useEffect } from "react";
 export interface Problem { 
     name: string;
     description: lineDescription[];
-    difficulty: string;
+    difficulty: number;
+    ranking?: number;
+    answered?: number;
 }
 export interface lineDescription{
     blockType: string;

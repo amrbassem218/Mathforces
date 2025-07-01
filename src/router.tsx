@@ -8,6 +8,7 @@ import Contest from "./pages/contest";
 import Contests from "./pages/contests";
 import CreateContest from "./pages/create-contest";
 import Ranking from "./pages/ranking";
+import ProblemSet from "./pages/problemset";
 
 export const router = createBrowserRouter([
     {
@@ -48,6 +49,11 @@ export const router = createBrowserRouter([
     {
         element: <Ranking/>,
         path: "ranking",
+        errorElement: <Error/>
+    },
+    {
+        element: <ProblemSet/>,
+        path: "problemset",
         errorElement: <Error/>
     },
 ])

@@ -36,24 +36,24 @@ const Header: React.FunctionComponent<IHeaderProps> = (props) => {
               <Button variant={'link'} className='text-md text-text font-normal' onClick={() => navigate("/contests")}>Contests</Button>
             </li>
             <li className="hover:font-medium" >
-              <HoverCard>
+                  <Button variant={'link'} className='text-md text-text font-normal ' onClick={() => navigate("/problemset")}>Problemset</Button>
+              {/* <HoverCard>
                 <HoverCardTrigger>
-                  <Button disabled variant={'link'} className='text-md text-text font-normal cursor-not-allowed' onClick={() => navigate("/problemset")}>Problemset</Button>
                 </HoverCardTrigger>
                 <HoverCardContent className='w-60 h-10 bg-background border-1 border-border flex items-center justify-center rounded-md animate-pulse'>
                   <p>Under Construction</p>
                 </HoverCardContent>
-              </HoverCard>
+              </HoverCard> */}
             </li>
             <li className="hover:font-medium">
-              <HoverCard>
-                <HoverCardTrigger>
                   <Button variant={'link'} className='text-md text-text font-normal' onClick={() => navigate("/ranking")}>Ranking</Button>
+              {/* <HoverCard>
+                <HoverCardTrigger>
                 </HoverCardTrigger>
                 <HoverCardContent className='w-60 h-10 bg-background border-1 border-border flex items-center justify-center rounded-md animate-pulse'>
                   <p>Under Construction</p>
                 </HoverCardContent>
-              </HoverCard>
+              </HoverCard> */}
             </li>
           </ul>
         </nav>

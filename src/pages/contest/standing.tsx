@@ -38,7 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getStandingData, useGetStanding } from './standingDataTable';
+import { useGetStanding } from './standingDataTable';
 
 export interface IStandingProps {
     activeTab: string;
@@ -67,17 +67,6 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
       columnVisibility,
     },
   })
-    // console.log("cols: ", columns.)
-    // console.log("table: ", table)
-    // useEffect(() => {
-    //     if(activeTab == "standing"){
-    //         .then((data) => {
-    //           setStanding(data);
-    //           setColumns(data.columns);
-    //           setData(data.data.standingData);
-    //         })
-    //     }
-    // }, [activeTab, db])
   return (
     <div>
       <div>

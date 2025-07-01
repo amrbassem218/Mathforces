@@ -7,6 +7,7 @@ import ProtectedRoutes from "./components/ui/protectedroutes";
 import Contest from "./pages/contest";
 import Contests from "./pages/contests";
 import CreateContest from "./pages/create-contest";
+import Ranking from "./pages/ranking";
 
 export const router = createBrowserRouter([
     {
@@ -42,6 +43,11 @@ export const router = createBrowserRouter([
     {
         element: <Contest/>,
         path: "contest/:id/:registrationMode",
+        errorElement: <Error/>
+    },
+    {
+        element: <Ranking/>,
+        path: "ranking",
         errorElement: <Error/>
     },
 ])

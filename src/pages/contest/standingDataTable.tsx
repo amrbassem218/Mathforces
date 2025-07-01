@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 
-export const getStandingData = async({contest}: {contest: DocumentData}) => {
+const getStandingData = async({contest}: {contest: DocumentData}) => {
     let standingData: userPerformace[] = [];
     const standing = await getDocs(collection(db, "contests", contest.id, "standing"))
     let problemsList: string[] = [];
@@ -57,7 +57,7 @@ export const getStandingData = async({contest}: {contest: DocumentData}) => {
     standingData = standingDataPromise;
     return {standingData, problemsList};
 }
-export const getColumns = ({standingData, problemsList}: IgetStandingData): ColumnDef<userPerformace>[] => {
+const getStandingColumns = ({standingData, problemsList}: IgetStandingData): ColumnDef<userPerformace>[] => {
     return [
         {
             id: "ranking",
@@ -67,8 +67,8 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
                 <p>{row.getValue("ranking")}</p>
             ),
             footer: `${standingData.length}`,
-            // enableHiding: false,
-            // enableSorting: false
+            enableHiding: false,
+            enableSorting: false
         },
         {
             accessorKey: "username",
@@ -97,7 +97,6 @@ export const getColumns = ({standingData, problemsList}: IgetStandingData): Colu
                     console.log("from 2lb el7ds: ", problemData.timeAnswered);
                     return (<p className={`text-center ${problemData?.verdict == true ? "text-green-600" : problemData?.verdict == false ? "text-red-600" : ""}`}>{problemData.timeAnswered}</p>)
                 }
-                
             }
         )),
         {
@@ -134,7 +133,7 @@ export const useGetStanding = ({contest} : {contest:DocumentData}) => {
             props.standingData.forEach((e, i) => {
                 e.ranking = i + 1;
             })
-            setColumns(getColumns(props));
+            setColumns(getStandingColumns(props));
         })
     }, [])
     return {data, columns};

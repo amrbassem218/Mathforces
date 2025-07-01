@@ -48,7 +48,6 @@ export const KaTeXRenderer: React.FC<KaTeXRendererProps> = ({expression}) => {
     .replace(/\{([^{}]+)\\binom([^{}\s]+)\}/g, '$1\\binom{$1}{$2}')
     .replace(/\{([^{}]+)\\binom\{-1\}\}/g, '$1\\binom{$1}{-1}')
     .replace(/\\noindent/g, '')
-    .replace(/\\textbf\{([^}]+)\}/g, '<strong>$1</strong>')
     .replace(/\\emph\{([^}]+)\}/g, '<em>$1</em>')
     .replace(/\\textit\{([^}]+)\}/g, '<em>$1</em>')
     .replace(/\\url\{([^}]+)\}/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');

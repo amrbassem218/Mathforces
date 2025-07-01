@@ -1,4 +1,3 @@
-import { getStandingData } from "@/pages/contest/standingDataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import * as React from "react";
 import { useEffect } from "react";
@@ -43,4 +42,10 @@ export interface IgetStandingData{
 export interface IuseGetStanding{
     data: IgetStandingData;
     columns: ColumnDef<userPerformace>[];
+}
+export interface IuserRanking {
+    username: string;
+    title: string;
+    rating: number;
+    ranking: number;
 }

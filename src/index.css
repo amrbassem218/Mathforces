@@ -111,7 +111,7 @@
     @apply text-text
   }
   .table_element{
-    @apply border-border border-1 rounded-md 
+    @apply border-border border-1  
   }
   .rule span {
     @apply font-semibold

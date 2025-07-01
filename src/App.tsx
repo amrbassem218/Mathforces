@@ -6,12 +6,14 @@ import { RouterProvider } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { Analytics } from "@vercel/analytics/next"
 import router from './router';
+import ProblemSetGetter from './components/problemsetGetter';
 
   function App() {
   return (  
     <>
     <Toaster/>
-    <RouterProvider router={router}/>
+    <ProblemSetGetter/>
+    {/* <RouterProvider router={router}/> */}
     </>
   )
 }

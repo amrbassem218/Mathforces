@@ -8,12 +8,14 @@ const ProblemSet: React.FunctionComponent<IProblemSetProps> = (props) => {
   return (
     <div className="flex flex-col gap-5">
       <Header  />
-      <div className="grid grid-cols-12 w-full gap-5">
-        <div className="col-span-6 col-start-2">
+      <div className="flex justify-center">
           <ProblemSetTable />
+      </div>
+      {/* <div className="grid grid-cols-12 w-full gap-5">
+        <div className="col-span-6 col-start-2">
         </div>
         <div className="col-span-5 border-1 border-border"></div>
-      </div>
+      </div> */}
     </div>
   );
 };

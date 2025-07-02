@@ -58,7 +58,7 @@ const ProblemSetTable: React.FunctionComponent<IProblemSetTableProps> = (
     },
   });
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-200 flex flex-col gap-3">
       <div>
         <Input
           placeholder="Search for ..."

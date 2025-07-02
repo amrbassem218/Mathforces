@@ -1,10 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from "path"
-import tailwindcss from "@tailwindcss/vite"
-import commonjs from 'vite-plugin-commonjs';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
-
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import tailwindcss from "@tailwindcss/vite";
+import commonjs from "vite-plugin-commonjs";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,9 +13,9 @@ export default defineConfig({
     commonjs(),
     nodePolyfills({
       overrides: {
-        fs: 'memfs',
+        fs: "memfs",
       },
-    })
+    }),
   ],
   resolve: {
     alias: {
@@ -24,8 +23,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['latex.js'],
-    exclude: ['latex.js/dist/documentclasses/.keep', 'latex.js/dist/packages/.keep']
+    include: ["latex.js"],
+    exclude: [
+      "latex.js/dist/documentclasses/.keep",
+      "latex.js/dist/packages/.keep",
+    ],
   },
   build: {
     commonjsOptions: {
@@ -33,7 +35,10 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      external: ['latex.js/dist/documentclasses/.keep', 'latex.js/dist/packages/.keep'],
-    }
-  }
-})
+      external: [
+        "latex.js/dist/documentclasses/.keep",
+        "latex.js/dist/packages/.keep",
+      ],
+    },
+  },
+});

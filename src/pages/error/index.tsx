@@ -1,10 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 
-interface IErrorProps {
-}
+interface IErrorProps {}
 
 const Error: React.FunctionComponent<IErrorProps> = (_props) => {
-  return (<div>404 Math not found</div>);
+  return <div>404 Math not found</div>;
 };
 
 export default Error;

@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { useEffect, useState } from "react"
-interface DateAndTimePicker{
-  onChange: (values: {date?: Date | undefined, time?: string}) => void;
+} from "@/components/ui/popover";
+import { useEffect, useState } from "react";
+interface DateAndTimePicker {
+  onChange: (values: { date?: Date | undefined; time?: string }) => void;
 }
-export function DateAndTimePicker({onChange}: DateAndTimePicker) {
-  const [open, setOpen] = useState(false)
-  const [date, setDate] = useState<Date | undefined>(undefined)
-  const [time, setTime] = useState("05:30:00"); 
+export function DateAndTimePicker({ onChange }: DateAndTimePicker) {
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [time, setTime] = useState("05:30:00");
   useEffect(() => {
-    onChange({date, time});
-  },[date,time])
+    onChange({ date, time });
+  }, [date, time]);
   return (
     <div className="flex gap-4">
       <div className="flex flex-col gap-3">
@@ -45,8 +45,8 @@ export function DateAndTimePicker({onChange}: DateAndTimePicker) {
               selected={date}
               captionLayout="dropdown"
               onSelect={(date) => {
-                setDate(date)
-                setOpen(false)
+                setDate(date);
+                setOpen(false);
               }}
             />
           </PopoverContent>
@@ -66,5 +66,5 @@ export function DateAndTimePicker({onChange}: DateAndTimePicker) {
         />
       </div>
     </div>
-  )
+  );
 }

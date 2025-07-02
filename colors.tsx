@@ -1,7 +1,7 @@
 export const topicColors = {
-    combinatorics: "",
-    algebra: "",
-    geometry: "",
-    counting: "",
-    calculus: "",
-} 
+  combinatorics: "",
+  algebra: "",
+  geometry: "",
+  counting: "",
+  calculus: "",
+};

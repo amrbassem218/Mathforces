@@ -1,18 +1,17 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended'
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
   ],
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ["react", "@typescript-eslint"],
   rules: {
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'react/react-in-jsx-scope': 'off',
-    "semi": ["error", "always"],   
-
+    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "react/react-in-jsx-scope": "off",
+    semi: ["error", "always"],
   },
   settings: {
-    react: { version: 'detect' }
-  }
+    react: { version: "detect" },
+  },
 };

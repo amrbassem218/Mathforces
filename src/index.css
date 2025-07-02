@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Love+Ya+Like+A+Sister&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Love+Ya+Like+A+Sister&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Love+Ya+Like+A+Sister&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
@@ -49,56 +49,55 @@
   --radius: 0.625rem;
 
   /* Base colors */
-  --background: #E9EBF6;
-  --foreground: #1E1506;
-  --text: #1E1506;
+  --background: #e9ebf6;
+  --foreground: #1e1506;
+  --text: #1e1506;
 
   /* Primary theme */
-  --primary: #DAA034;
-  --primary-foreground: #1E1506;
+  --primary: #daa034;
+  --primary-foreground: #1e1506;
 
   /* Secondary theme */
-  --secondary: #8ED7EB;
-  --secondary-foreground: #1E1506;
+  --secondary: #8ed7eb;
+  --secondary-foreground: #1e1506;
 
   /* Accent theme */
-  --accent: #FF5F5C;
-  --accent-foreground: #FFFFFF;
+  --accent: #ff5f5c;
+  --accent-foreground: #ffffff;
 
   /* Muted and support */
-  --muted: #E9EBF6;
-  --muted-foreground: #1E150670;
+  --muted: #e9ebf6;
+  --muted-foreground: #1e150670;
 
   /* Card & popover */
-  --card: #E9EBF6;
-  --card-foreground: #1E1506;
-  --popover: #FFFFFF;
-  --popover-foreground: #1E1506;
+  --card: #e9ebf6;
+  --card-foreground: #1e1506;
+  --popover: #ffffff;
+  --popover-foreground: #1e1506;
 
   /* Destructive (uses accent) */
-  --destructive: #FF5F5C;
-  --destructive-foreground: #FFFFFF;
+  --destructive: #ff5f5c;
+  --destructive-foreground: #ffffff;
 
   /* Form elements */
-  --border: #1E150633; /* 20% opacity of text */
-  --input: #1E150610;
-  --border-auth: #8ED7EB;
+  --border: #1e150633; /* 20% opacity of text */
+  --input: #1e150610;
+  --border-auth: #8ed7eb;
   /* --placeholder: */
-  --ring: #8ED7EB;
+  --ring: #8ed7eb;
 
   /* Sidebar */
-  --sidebar: #E9EBF6;
-  --sidebar-foreground: #1E1506;
-  --sidebar-primary: #DAA034;
-  --sidebar-primary-foreground: #1E1506;
-  --sidebar-accent: #8ED7EB;
-  --sidebar-accent-foreground: #1E1506;
-  --sidebar-border: #1E150633;
-  --sidebar-ring: #8ED7EB;
+  --sidebar: #e9ebf6;
+  --sidebar-foreground: #1e1506;
+  --sidebar-primary: #daa034;
+  --sidebar-primary-foreground: #1e1506;
+  --sidebar-accent: #8ed7eb;
+  --sidebar-accent-foreground: #1e1506;
+  --sidebar-border: #1e150633;
+  --sidebar-ring: #8ed7eb;
 }
 
-@theme{
-
+@theme {
 }
 @layer base {
   * {
@@ -107,14 +106,22 @@
   body {
     @apply bg-background text-foreground;
   }
-  h1,h2,h3,h4,h5,h6,p,Button,CardHeader{
-    @apply text-text
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  Button,
+  CardHeader {
+    @apply text-text;
   }
-  .table_element{
-    @apply border-border border-1  
+  .table_element {
+    @apply border-border border-1;
   }
   .rule span {
-    @apply font-semibold
+    @apply font-semibold;
   }
 }
 

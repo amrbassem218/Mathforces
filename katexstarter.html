@@ -1,40 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body);"></script>
-</head>
-<body>
-  <div id="math"></div>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body);"
+    ></script>
+  </head>
+  <body>
+    <div id="math"></div>
 
-  <script>
+    <script>
       // Wait until katex is loaded
       window.addEventListener("DOMContentLoaded", () => {
         renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\[", right: "\\]", display: true},
-          {left: "\\(", right: "\\)", display: false}
-        ]
-      });
-      let math = document.getElementById("math");
-      math.innerHTML = String.raw`$$
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false },
+          ],
+        });
+        let math = document.getElementById("math");
+        math.innerHTML = String.raw`$$
   \begin{align*} & \lim_{x \to 1^-} F_a(x) e^{-1/(1-x)} = 0 \qquad \text{for all }a < c\text{, and} \\ & \lim_{x \to 1^-} F_a(x) e^{-1/(1-x)} = \infty \qquad \text{for all }a > c\text{.} \end{align*}
   $$`;
-  ''
-      renderMathInElement(math,{
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\[", right: "\\]", display: true},
-          {left: "\\(", right: "\\)", display: false}
-        ]
+        ("");
+        renderMathInElement(math, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false },
+          ],
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

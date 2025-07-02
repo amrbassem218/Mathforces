@@ -1,9 +1,15 @@
-import { collection, doc, DocumentData, getDoc, getDocs } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
-import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
-import { IproblemStanding, IuseGetStanding, userPerformace } from 'types';
-import { isRunnning } from '../../../utilities';
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
+import { db } from "../../../firebaseConfig";
+import * as React from "react";
+import { useState, useEffect, useMemo } from "react";
+import { IproblemStanding, IuseGetStanding, userPerformace } from "types";
+import { isRunnning } from "../../../utilities";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -16,10 +22,10 @@ import {
   useReactTable,
   VisibilityState,
   Row,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -28,8 +34,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -37,21 +43,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useGetStanding } from './standingDataTable';
+} from "@/components/ui/table";
+import { useGetStanding } from "./standingDataTable";
 
 export interface IStandingProps {
-    activeTab: string;
-    contest: DocumentData;
+  activeTab: string;
+  contest: DocumentData;
 }
 
-const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest}) => {
-    const {data, columns} = useGetStanding({contest});
-    const [standing, setStanding] = useState<IuseGetStanding>();
-    const [sorting, setSorting] = useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-    const table = useReactTable({
+const Standing: React.FunctionComponent<IStandingProps> = ({
+  activeTab,
+  contest,
+}) => {
+  const { data, columns } = useGetStanding({ contest });
+  const [standing, setStanding] = useState<IuseGetStanding>();
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const table = useReactTable({
     data: data.standingData,
     columns: columns,
     onSortingChange: setSorting,
@@ -66,60 +75,62 @@ const Standing: React.FunctionComponent<IStandingProps> = ({activeTab, contest})
       columnFilters,
       columnVisibility,
     },
-  })
+  });
   return (
     <div>
       <div>
         <Input
-          placeholder='Search for ...'
-          value={(table.getColumn("username")?.getFilterValue() as string ?? "")}
-          onChange={(e) => table.getColumn("username")?.setFilterValue(e.target.value)}
-          className='max-w-sm'/>
+          placeholder="Search for ..."
+          value={
+            (table.getColumn("username")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(e) =>
+            table.getColumn("username")?.setFilterValue(e.target.value)
+          }
+          className="max-w-sm"
+        />
       </div>
-      <Table >
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className='table_element font-semibold text-base'>
-                  {
-                    header.isPlaceholder
+                <TableHead
+                  key={header.id}
+                  className="table_element font-semibold text-base"
+                >
+                  {header.isPlaceholder
                     ? null
                     : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )
-                  }
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {
-          table.getRowModel().rows?.length
-          ? (
+          {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((rowCell) => (
-                  <TableCell key={rowCell.id} className='table_element'>
+                  <TableCell key={rowCell.id} className="table_element">
                     {flexRender(
                       rowCell.column.columnDef.cell,
-                      rowCell.getContext()
+                      rowCell.getContext(),
                     )}
                   </TableCell>
                 ))}
               </TableRow>
             ))
-          ) 
-          : (
+          ) : (
             <TableRow>
-              <TableCell className='text-center' colSpan={columns.length}>
+              <TableCell className="text-center" colSpan={columns.length}>
                 No result
               </TableCell>
             </TableRow>
-          )
-          }
+          )}
         </TableBody>
       </Table>
     </div>

@@ -10,15 +10,13 @@
       "@/*": ["./src/*", "src/types/vite-env.d.ts"]
     },
     "typeRoots": ["./node_modules/@types", "src/types"],
-    "lib": [
-        "es5", "es6", "dom", "dom.iterable"
-    ],
+    "lib": ["es5", "es6", "dom", "dom.iterable"],
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "strict": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "ts-node": {
     "esm": true

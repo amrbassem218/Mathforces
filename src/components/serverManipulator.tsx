@@ -11,15 +11,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { Problem } from "types";
-import { title } from "../../utilities";
+import { rand, title } from "../../utilities";
 
 interface IProblemSetGetterProps {}
 const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
   props,
 ) => {
-  const rand = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min; // very unnecessary but cool so meh
-  };
+  
   const handleGetProblemsFromContests = async () => {
     console.log("clicked");
     let problems: Record<string, DocumentData[]> = {};
@@ -101,7 +99,7 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       }
     }
   }
-  
+
   return (
     <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
     // <Button onClick={() => handleAssignDifficulty()}>click Me!</Button>

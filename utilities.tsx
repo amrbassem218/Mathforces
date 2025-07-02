@@ -153,3 +153,7 @@ export const title = (rating: number) => {
   // }
   return { name: "Gr. Master", bg: "bg-red-700/70", text: "text-red-700" };
 };
+
+export const rand = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min; // very unnecessary but cool so meh
+  };

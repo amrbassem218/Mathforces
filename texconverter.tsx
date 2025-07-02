@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { lineDescription, Problems } from "./types";
+import { rand } from "utilities";
 const processLatex = (content: string): lineDescription[] => {
   const problemDescription: lineDescription[] = [];
   const lines = content.split("\n");
@@ -154,7 +155,7 @@ export const useProblems = ({ formattedTex }: IuseProblemsProps) => {
               parsedProblems[currentProblemName] = {
                 name: currentProblemName,
                 description: processLatex(curProblem.trim()),
-                difficulty: "easy",
+                difficulty: rand(700,3500),
               };
             }
 
@@ -170,7 +171,7 @@ export const useProblems = ({ formattedTex }: IuseProblemsProps) => {
           parsedProblems[currentProblemName] = {
             name: currentProblemName,
             description: processLatex(curProblem.trim()),
-            difficulty: "easy",
+            difficulty: rand(700,3500),
           };
         }
 

@@ -12,7 +12,7 @@ import {
 } from "@radix-ui/react-hover-card";
 import { title } from "../../../utilities";
 interface IHeaderProps {
-  page: string;
+  page?: string;
 }
 
 const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {

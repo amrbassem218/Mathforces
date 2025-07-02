@@ -130,7 +130,7 @@ const CreateContest: React.FunctionComponent = () => {
                 difficulty: problem.difficulty,
                 answer: answers[problem.name],
                 explanation: explanation,
-              },
+              }
             );
           }
         } else {
@@ -153,7 +153,7 @@ const CreateContest: React.FunctionComponent = () => {
 
   const handleCreateContestSubmit = (data: zodSchema) => {
     const missingAnswers = Object.keys(problems).filter(
-      (problemName) => !answers[problemName],
+      (problemName) => !answers[problemName]
     );
     if (missingAnswers.length > 0) {
       toast.error("Please provide answers for all problems", {
@@ -176,7 +176,7 @@ const CreateContest: React.FunctionComponent = () => {
         if (contestData.id) {
           curContestId = Math.max(
             Number(contestData.id) + 1,
-            Number(curContestId),
+            Number(curContestId)
           ).toString();
         }
       });
@@ -196,10 +196,10 @@ const CreateContest: React.FunctionComponent = () => {
       const contestSecond = Number(data.contestTime.slice(6, 8)) * 1000;
       const contestTime = contestHour + contestMinute + contestSecond;
       const contestDateAndTime = new Date(
-        data.contestDate.getTime() + contestTime,
+        data.contestDate.getTime() + contestTime
       );
       const contestDateAndTimeEnd = new Date(
-        contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000,
+        contestDateAndTime.getTime() + data.contestLength * 60 * 60 * 1000
       );
       const formattedTex = formatTex(data.contestTex);
       setFormattedContestTex(formattedTex);
@@ -220,7 +220,7 @@ const CreateContest: React.FunctionComponent = () => {
       const subCollections = ["problems"];
       subCollections.forEach(async (col) => {
         const subDocs = await getDocs(
-          collection(db, "contests", contestId, col),
+          collection(db, "contests", contestId, col)
         );
         subDocs.forEach((doc) => {
           deleteDoc(doc.ref);
@@ -252,7 +252,7 @@ const CreateContest: React.FunctionComponent = () => {
   }
   return (
     <div>
-      <Header login={"full"} signup={"outline"} />
+      <Header />
       <div className="grid grid-cols-12">
         <div className="col-span-8">
           <Form {...form}>
@@ -378,7 +378,7 @@ const CreateContest: React.FunctionComponent = () => {
                           )}
                         </div>
                       );
-                    },
+                    }
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>

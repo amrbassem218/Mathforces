@@ -10,7 +10,7 @@ const Home: React.FunctionComponent<IHomeProps> = (_props) => {
   return (
     <>
       <div className="flex flex-col h-screen">
-        <Header login={"full"} signup={"outline"} />
+        <Header />
         <div className="flex flex-col flex-grow justify-center items-center">
           <h1 className="text-4xl font-medium mb-4">
             Go to Contests and prove your dominance{" "}

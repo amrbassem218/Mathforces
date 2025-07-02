@@ -7,7 +7,7 @@ interface IProblemSetProps {}
 const ProblemSet: React.FunctionComponent<IProblemSetProps> = (props) => {
   return (
     <div className="flex flex-col gap-5">
-      <Header login={"full"} signup={"round"} />
+      <Header  />
       <div className="grid grid-cols-12 w-full gap-5">
         <div className="col-span-6 col-start-2">
           <ProblemSetTable />

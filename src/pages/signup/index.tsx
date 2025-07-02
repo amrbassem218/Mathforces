@@ -175,7 +175,7 @@ export function Signup() {
   }
   return (
     <div className="flex flex-col min-h-screen w-full">
-      <Header login={"outline"} signup={"full"} />
+      <Header />
       <form
         onSubmit={handleSubmit}
         className="m-auto flex items-center justify-center flex-grow"

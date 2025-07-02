@@ -348,7 +348,7 @@ const Contest: React.FunctionComponent = () => {
 
   return (
     <>
-      <Header login={"full"} signup={"outline"} />
+      <Header />
       <div className="flex flex-col h-screen">
         {popUp && (
           <AlertDialog open={popUp} onOpenChange={setPopUp}>

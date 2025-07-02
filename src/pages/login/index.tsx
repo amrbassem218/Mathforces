@@ -108,7 +108,7 @@ export function Login() {
 
   return (
     <div className="flex flex-col min-h-screen w-full">
-      <Header login="full" signup="outline" />
+      <Header />
       <form
         onSubmit={handleSubmit}
         className="m-auto flex items-center justify-center flex-grow"

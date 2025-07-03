@@ -17,8 +17,13 @@ interface IProblemSetGetterProps {}
 const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
   props,
 ) => {
-  
   const handleGetProblemsFromContests = async () => {
+    const usersSnap = await getDocs(collection(db, "users"));
+    let users: DocumentData[] = [];
+    for(const user of usersSnap.docs){
+      const userData = user.data();
+      users.push(userData);
+    }
     console.log("clicked");
     let problems: Record<string, DocumentData[]> = {};
     const contestsSnap = await getDocs(collection(db, "contests"));
@@ -37,9 +42,11 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
             name: problemData.name,
             contestName: contestData.name,
             nameFull: `${problemData.name}-${contestData.name}`,
-            contest: contest.id, 
+            contestId: contest.id, 
+            date: contestData.date,
             difficulty: rand(700, 3500),
             answered: rand(1, 10),
+            author: users[rand(0,users.length-1)].username
           });
         } else {
           problems[contestData.name] = [problemData];
@@ -90,7 +97,7 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       );
     }
   };
-  const handleDelete = async() => {
+  const handleDeleteProblems = async() => {
     const problems = await getDocs(collection(db, "problemSet"));
     for (let problem of problems.docs){
       const problemData = problem.data();
@@ -99,13 +106,23 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       }
     }
   }
-
+  const handleDeleteContests = async() => {
+    let counter = 0;
+    const contestsSnap = await getDocs(collection(db, "contests"));
+    for(let contest of contestsSnap.docs){
+      if(counter < 10){
+        deleteDoc(doc(db, "contests", contest.id));
+        counter++;
+      }
+    }
+  }
   return (
     <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
     // <Button onClick={() => handleAssignDifficulty()}>click Me!</Button>
     // <Button onClick={() => handleAssignAnswered()}>click Me!</Button>
     // <Button onClick={() => handleAssignRating()}>click Me!</Button>
     // <Button onClick={() => handleDelete()}>click Me!</Button>
+    // <Button onClick={() => handleDeleteContests()}>click Me!</Button>
   );
 };
 

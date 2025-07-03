@@ -9,10 +9,10 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { IuserRanking, Problem } from "../../../types";
-import { isRunnning, viewDate, viewTime } from "../../../utilities";
+import { isRunnning, timeAndDate, viewDate, viewTime } from "../../../utilities";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, CircleCheckBig } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const getProblemsetData = async () => {
@@ -23,11 +23,12 @@ const getProblemsetData = async () => {
     let problem: Problem = {
       name: problemData.name,
       nameFull: problemData.nameFull,
-      contest: problemData.contest,
+      contestId: problemData.contestId,
       description: problemData.description,
       difficulty: problemData.difficulty,
       ranking: 0,
       answered: problemData.answered,
+      date: problemData.date.toDate(),
     };
     problems.push(problem);
   });
@@ -47,16 +48,37 @@ const getproblemsetColumns = (problems: Problem[]): ColumnDef<Problem>[] => {
     {
       id: "name",
       accessorKey: "name",
-      header: () => <p className="text-center">Problem Name</p>,
+      header: () => <p className="text-center text-md">Problem Name</p>,
       cell: ({ row }) => (
         <Button
           variant={"link"}
-          className="text-purple-500 font-semibold text-center font-medium underline"
-          onClick={() => location.href = (`/contest/${row.getValue('contest')}`)}
+          className="text-purple-500 font-semibold text-center underline"
+          onClick={() => {
+            location.href = `/contest/${row.original.contestId}/none`
+          }
+          }
         >
-          {row.getValue("name")}
+          {row.original.nameFull}
         </Button>
       ),
+    },
+    {
+      id: "date",
+      accessorKey: "date",
+      header: () => <p className="text-center">Date Modified</p>,
+      cell: ({ row }) => {
+        const date = row.original.date;
+        return date && <Button
+          variant={"link"}
+          className="text-purple-500 font-normal text-center underline"
+          onClick={() => {
+            timeAndDate(date)
+          }
+          }
+        >
+          {viewDate(date).date}
+        </Button>
+      },
     },
     {
       id: "difficulty",
@@ -66,15 +88,15 @@ const getproblemsetColumns = (problems: Problem[]): ColumnDef<Problem>[] => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="mx-auto"
+            className="mx-auto text-text"
           >
-            Difficulty
+            Diff.
             <ArrowUpDown />
           </Button>
         </div>
       ),
       cell: ({ row }) => (
-        <h2 className="text-purple-500 font-semibold">
+        <h2 className="text-purple-500 font-normal">
           {row.getValue("difficulty")}
         </h2>
       ),
@@ -90,13 +112,13 @@ const getproblemsetColumns = (problems: Problem[]): ColumnDef<Problem>[] => {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="mx-auto"
           >
-            Answered
+            <CircleCheckBig/>
             <ArrowUpDown />
           </Button>
         </div>
       ),
       cell: ({ row }) => (
-        <h2 className="text-purple-500 font-semibold">
+        <h2 className="text-purple-500 font-normal">
           {row.getValue("answered")}
         </h2>
       ),

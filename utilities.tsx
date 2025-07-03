@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 export const contestEndTime = (contest: DocumentData): Date => {
   const contestDate = contest.date.toDate();
   const contestEnd = new Date(
-    contestDate.getTime() + contest.length * 60 * 60 * 1000,
+    contestDate.getTime() + contest.length * 60 * 60 * 1000
   );
   return contestEnd;
 };
@@ -30,7 +30,7 @@ export const isRunnning = (contest: DocumentData, userId?: string) => {
       const now = new Date();
       const getContestDate = async () => {
         const unofficialContestSnap = await getDoc(
-          doc(db, "users", userId, "unofficialContests", contest.id),
+          doc(db, "users", userId, "unofficialContests", contest.id)
         );
         return unofficialContestSnap.data()?.date;
       };
@@ -59,18 +59,13 @@ export const viewDate = (date: Date) => {
   const part = (p: string) => {
     return dateParts.find((e) => e.type == p)?.value;
   };
-  let formattedDate =
-    part("weekday")?.slice(0, 3) +
-    " " +
-    part("month") +
-    "/" +
-    part("day") +
-    "/" +
-    part("year");
+  let formattedDate = part("month") + "/" + part("day") + "/" + part("year");
+  let fullDate = part("weekday")?.slice(0, 3) + " " + formattedDate;
   let time = part("hour") + ":" + part("minute");
   // console.log(datePart);
   return {
-    full: formattedDate + " " + time,
+    full: fullDate + " " + time,
+    dateFull: fullDate,
     date: formattedDate,
     timeFull: time + part("dayPeriod"),
     time: time,
@@ -91,7 +86,7 @@ export const viewTime = (duration: number) => {
   let full = `${hoursFormatted}:${minutesFormatted}:${secondsFormatted}`;
   return { hoursAndMinutes, minutesAndSeconds, full };
 };
-export const date = (contest: DocumentData) => {
+export const getDate = (contest: DocumentData) => {
   return contest.date.toDate();
 };
 
@@ -163,3 +158,11 @@ export default function useSetTitle(title: string) {
     document.title = `Mathforces - ${title}`;
   }, [title]);
 }
+
+export const timeAndDate = (date: Date) => {
+  const { part } = viewDate(date);
+  window.open(
+    `https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${(part("dayPeriod") == "AM" || Number(part("hour")) == 12) ? part("hour") : (Number(part("hour")) + 12).toString()}&min=${part("minute")}&sec=0`,
+    "_blank"
+  );
+};

@@ -9,7 +9,8 @@ export interface Problem {
   ranking?: number;
   answered?: number;
   nameFull?: string;
-  contest?: string;
+  contestId?: string;
+  date?: Date;
 }
 export interface lineDescription {
   blockType: string;

@@ -24,7 +24,8 @@ import setTitle, {
   ended,
   viewDate,
   isRunnning,
-  date,
+  getDate,
+  timeAndDate,
 } from "../../../utilities";
 import SideBar from "@/components/sidebar/sideBar";
 import useSetTitle from "../../../utilities";
@@ -137,11 +138,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     window.location.reload();
   };
   const handleDateClick = (contest: DocumentData) => {
-    const { part } = viewDate(date(contest));
-    window.open(
-      `https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${part("dayPeriod") == "AM" ? part("hour") : (Number(part("hour")) + 12).toString()}&min=${part("minute")}&sec=0`,
-      "_blank"
-    );
+    timeAndDate(getDate(contest));
   };
 
   // const getContestRegistered = (contest:DocumentData) => {
@@ -256,7 +253,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                           >
                             <CalendarDays className=" w-4.5 h-4.5" />
                             <p className="text-text/60 hover:text-text/75 underline tracking-wide text-sm ">
-                              {viewDate(date(contest)).full}
+                              {viewDate(getDate(contest)).dateFull}
                             </p>
                           </div>
                         )}
@@ -363,7 +360,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                           >
                             <CalendarDays className=" w-4.5 h-4.5" />
                             <p className="text-text/60 hover:text-text/75 underline tracking-wide text-sm ">
-                              {viewDate(date(contest)).full}
+                              {viewDate(getDate(contest)).dateFull}
                             </p>
                           </div>
                         )}

@@ -14,6 +14,7 @@ function App() {
     <>
       <Toaster />
       <RouterProvider router={router} />
+      {/* <ServerManipulator/> */}
     </>
   );
 }

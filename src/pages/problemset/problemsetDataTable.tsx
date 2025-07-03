@@ -46,8 +46,8 @@ const getproblemsetColumns = (problems: Problem[]): ColumnDef<Problem>[] => {
       enableSorting: false,
     },
     {
-      id: "name",
-      accessorKey: "name",
+      id: "nameFull",
+      accessorKey: "nameFull",
       header: () => <p className="text-center text-md">Problem Name</p>,
       cell: ({ row }) => (
         <Button

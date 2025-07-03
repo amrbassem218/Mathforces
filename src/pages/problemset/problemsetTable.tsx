@@ -62,9 +62,9 @@ const ProblemSetTable: React.FunctionComponent<IProblemSetTableProps> = (
       <div>
         <Input
           placeholder="Filter problems.."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("nameFull")?.getFilterValue() as string) ?? ""}
           onChange={(e) =>
-            table.getColumn("name")?.setFilterValue(e.target.value)
+            table.getColumn("nameFull")?.setFilterValue(e.target.value)
           }
           className="max-w-sm"
         />

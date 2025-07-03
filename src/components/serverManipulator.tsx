@@ -116,6 +116,7 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       }
     }
   }
+  // const r
   return (
     <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
     // <Button onClick={() => handleAssignDifficulty()}>click Me!</Button>

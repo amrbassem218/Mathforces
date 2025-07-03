@@ -19,13 +19,15 @@ import { Users } from "lucide-react";
 import path, { format } from "path";
 import { CalendarDays } from "lucide-react";
 import { Archive } from "lucide-react";
-import {
+import setTitle, {
   contestEndTime,
   ended,
   viewDate,
   isRunnning,
   date,
 } from "../../../utilities";
+import SideBar from "@/components/sidebar/sideBar";
+import useSetTitle from "../../../utilities";
 interface IContestsProps {}
 
 const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
@@ -40,6 +42,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     useState<DocumentData[] | null>(null);
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
+  useSetTitle("contests");
   useEffect(() => {
     const getContests = async () => {
       const contestSnap = await getDocs(collection(db, "contests"));
@@ -66,7 +69,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     if (user) {
       const getRegisteredContests = async () => {
         const registeredContestsSnap = await getDocs(
-          collection(db, "users", user.uid, "officialContests"),
+          collection(db, "users", user.uid, "officialContests")
         );
         let registeredContestsTemp: DocumentData[] = [];
         registeredContestsSnap.forEach((contest) => {
@@ -78,7 +81,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
 
       const getUnofficiallyRegisteredContests = async () => {
         const unofficiallyRegisteredContestsSnap = await getDocs(
-          collection(db, "users", user.uid, "unofficialContests"),
+          collection(db, "users", user.uid, "unofficialContests")
         );
         let unofficiallyRegisteredContestTemp: DocumentData[] = [];
         unofficiallyRegisteredContestsSnap.forEach((contest) => {
@@ -100,14 +103,14 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
           name: contest.name,
           id: contest.id,
         },
-        { merge: true },
+        { merge: true }
       );
       await setDoc(
         doc(db, "contests", contest.id),
         {
           registered: contest.registered + 1,
         },
-        { merge: true },
+        { merge: true }
       );
       if (registeredContests) {
         setRegisteredContests([...registeredContests, contest]);
@@ -137,7 +140,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
     const { part } = viewDate(date(contest));
     window.open(
       `https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${part("dayPeriod") == "AM" ? part("hour") : (Number(part("hour")) + 12).toString()}&min=${part("minute")}&sec=0`,
-      "_blank",
+      "_blank"
     );
   };
 
@@ -156,14 +159,14 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
           name: contest.name,
           id: contest.id,
         },
-        { merge: true },
+        { merge: true }
       );
       await setDoc(
         doc(db, "contests", contest.id),
         {
           unofficiallyRegistered: contest.unofficiallyRegistered + 1,
         },
-        { merge: true },
+        { merge: true }
       );
       if (unofficiallyRegisteredContests) {
         setUnofficiallyRegisteredContests([
@@ -183,7 +186,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   if (loading) {
     return <div>loading...</div>;
   }
-
+  
   return (
     <div>
       <Header />
@@ -260,7 +263,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                       </div>
                       <div className="flex flex-col gap-2 items-center my-auto">
                         {!registeredContests?.some(
-                          (e) => e.id == contest.id,
+                          (e) => e.id == contest.id
                         ) ? (
                           <Button
                             variant={"outline"}
@@ -367,7 +370,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
                       </div>
                       <div className="flex flex-col gap-2 items-center my-auto">
                         {!unofficiallyRegisteredContests?.some(
-                          (e) => e.id == contest.id,
+                          (e) => e.id == contest.id
                         ) ? (
                           <Button
                             variant={"outline"}
@@ -402,7 +405,9 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
             </Card>
           </div>
         </div>
-        <div className="col-span-4"></div>
+        <div className="col-span-6">
+          <SideBar />
+        </div>
       </div>
     </div>
   );

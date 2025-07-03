@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import * as React from "react";
-
+import { useState, useEffect } from "react";
 export const contestEndTime = (contest: DocumentData): Date => {
   const contestDate = contest.date.toDate();
   const contestEnd = new Date(
@@ -155,5 +155,11 @@ export const title = (rating: number) => {
 };
 
 export const rand = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min; // very unnecessary but cool so meh
-  };
+  return Math.floor(Math.random() * (max - min + 1)) + min; // very unnecessary but cool so meh
+};
+
+export default function useSetTitle(title: string) {
+  useEffect(() => {
+    document.title = `Mathforces - ${title}`;
+  }, [title]);
+}

@@ -24,18 +24,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {IoIosPodium} from "react-icons/io"
+import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+interface IRankingProps {
+  size: number;
+  full: boolean;
+  remove?: Function;
+}
 
-interface IRankingProps {}
-
-const RankingTable: React.FunctionComponent<IRankingProps> = (props) => {
+const RankingTable: React.FunctionComponent<IRankingProps> = ({size, full, remove}) => {
   const { data, columns } = useGetRanking();
-  const [standing, setStanding] = useState<IuserRanking>();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 20,
+    pageSize: size,
   });
   const table = useReactTable({
     data: data,
@@ -56,10 +63,11 @@ const RankingTable: React.FunctionComponent<IRankingProps> = (props) => {
     },
   });
   return (
-    <div className="w-200 flex flex-col gap-3">
+    <div className="w-full max-w-200 flex flex-col gap-3">
+      {full &&
       <div>
         <Input
-          placeholder="Search for ..."
+          placeholder="Filter username.."
           value={
             (table.getColumn("username")?.getFilterValue() as string) ?? ""
           }
@@ -69,7 +77,28 @@ const RankingTable: React.FunctionComponent<IRankingProps> = (props) => {
           className="max-w-sm"
         />
       </div>
+      }
       <div className="border-1 border-border rounded-md overflow-hidden">
+        {!full &&
+        <div className="flex justify-between w-full px-4 items-center py-2">
+          <div className="flex gap-2 items-center">
+            <IoIosPodium size={24}/>
+            <h1 className="text-lg font-semibold text-left">Ranking</h1>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <MoreHorizontal className="cursor-pointer "/>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-40 bg-background rounded-md border-2 border-border" align="start">
+              <DropdownMenuLabel className="font-semibold">Ranking</DropdownMenuLabel>
+              <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => navigate('/ranking')} className="hover:bg-gray-300 cursor-pointer">See more</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => remove ? remove() : ''} className="bg-red-500 rounded-sm text-lavender cursor-pointer hover:bg-red-600">remove this</DropdownMenuItem>
+            </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>  
+        }
         <Table className="">
           <TableHeader className="w-full">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -114,6 +143,7 @@ const RankingTable: React.FunctionComponent<IRankingProps> = (props) => {
           </TableBody>
         </Table>
       </div>
+      {full &&
       <div className="flex items-center justify-between w-full px-4">
         <div className="text-muted-foreground  text-sm">
           {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}{" "}
@@ -138,6 +168,7 @@ const RankingTable: React.FunctionComponent<IRankingProps> = (props) => {
           </Button>
         </div>
       </div>
+      }
     </div>
   );
 };

@@ -58,10 +58,10 @@ const ProblemSetTable: React.FunctionComponent<IProblemSetTableProps> = (
     },
   });
   return (
-    <div className="w-200 flex flex-col gap-3">
+    <div className="max-w-200 flex flex-col gap-3">
       <div>
         <Input
-          placeholder="Search for ..."
+          placeholder="Filter problems.."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(e) =>
             table.getColumn("name")?.setFilterValue(e.target.value)

@@ -29,7 +29,7 @@ import { lineDescription } from "types";
 import { auth, db } from "../../../firebaseConfig";
 import Error from "../error";
 import Countdown from "react-countdown";
-import { contestEndTime, ended, isRunnning } from "../../../utilities";
+import useSetTitle, { contestEndTime, ended, isRunnning } from "../../../utilities";
 import { User } from "firebase/auth";
 import {
   AlertDialog,
@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import Standing from "./standing";
 import Editorials from "./editorials";
-import SideBar from "./sidebar";
+import ContestSideBar from "./contestSidebar";
 interface problemInputAnswer {
   answer: string | null;
   verdict: boolean | null;
@@ -79,7 +79,7 @@ const Contest: React.FunctionComponent = () => {
   const handleInputAnswerChange = async (
     attr: string,
     value: any,
-    problem: DocumentData,
+    problem: DocumentData
   ) => {
     if (user) {
       setInputAnswers((prev) => ({
@@ -98,7 +98,7 @@ const Contest: React.FunctionComponent = () => {
       // console.log(inputAnswers);
       return inputAnswers[problem.name]?.verdict;
     },
-    [inputAnswers],
+    [inputAnswers]
   );
 
   const problemStatuses = useMemo(() => {
@@ -108,7 +108,7 @@ const Contest: React.FunctionComponent = () => {
         acc[problem.name] = verdict(problem);
         return acc;
       },
-      {} as Record<string, boolean | null>,
+      {} as Record<string, boolean | null>
     );
   }, [problems, verdict, inputAnswers]);
 
@@ -137,7 +137,7 @@ const Contest: React.FunctionComponent = () => {
           if (contestSnap.exists()) {
             setContest(contestSnap.data());
             const problemsSnap = await getDocs(
-              collection(contestRef, "problems"),
+              collection(contestRef, "problems")
             );
             const arr: DocumentData[] = [];
             const initialAnswers: Record<string, problemInputAnswer> = {};
@@ -175,8 +175,8 @@ const Contest: React.FunctionComponent = () => {
                   user.uid,
                   "officialContests",
                   props.contest.id,
-                  "answered",
-                ),
+                  "answered"
+                )
               );
               const unOfficialContestData = await getDocs(
                 collection(
@@ -185,8 +185,8 @@ const Contest: React.FunctionComponent = () => {
                   user.uid,
                   "unofficialContests",
                   props.contest.id,
-                  "answered",
-                ),
+                  "answered"
+                )
               );
               let userAnswers = props.initalAnswers;
               console.log(userAnswers);
@@ -248,6 +248,11 @@ const Contest: React.FunctionComponent = () => {
       }
     }
   }, [contestId, db, id]);
+  // useEffect(() => {
+  //   if(contest){
+  //     useSetTitle(`${contest.name}`)
+  //   }
+  // }, [contest]);
   if (loading || !problems || !contest) {
     return <div>loading...</div>;
   }
@@ -260,7 +265,7 @@ const Contest: React.FunctionComponent = () => {
   }
   const handleProblemSubmit = (problem: DocumentData) => {
     const problemInput = document.getElementById(
-      `${problem.name}-answer`,
+      `${problem.name}-answer`
     ) as HTMLInputElement;
     if (problemInput) {
       if (contest && ended(contest)) {
@@ -281,17 +286,17 @@ const Contest: React.FunctionComponent = () => {
           `${registrationMode}Contests`,
           contest.id,
           "answered",
-          problem.name,
+          problem.name
         ),
         {
           answer: problemInput.value,
           timeAnswered: problemTimeAnswered,
         },
-        { merge: true },
+        { merge: true }
       );
       if (isRunnning(contest)) {
         let nextProblemIndex = problems.findIndex(
-          (e) => e.name == activeProblem,
+          (e) => e.name == activeProblem
         );
         nextProblemIndex++;
         if (nextProblemIndex == problems.length) {
@@ -303,7 +308,7 @@ const Contest: React.FunctionComponent = () => {
   };
   const handleContestEnd = async (contest: DocumentData) => {
     const correctAnswers = await getDocs(
-      collection(db, "contests", contest.id, "problems"),
+      collection(db, "contests", contest.id, "problems")
     );
     let userAnswers = inputAnswers;
     correctAnswers.forEach((problem) => {
@@ -325,12 +330,12 @@ const Contest: React.FunctionComponent = () => {
           `${registrationMode}Contests`,
           contest.id,
           "answered",
-          problem.name,
+          problem.name
         ),
         {
           verdict: userAnswers[problem.name].verdict,
         },
-        { merge: true },
+        { merge: true }
       );
     });
     console.log("contestEnd happend");
@@ -345,7 +350,6 @@ const Contest: React.FunctionComponent = () => {
   if (ended(contest) && registrationMode != "none") {
     navigate(`/contest/${id}/none`);
   }
-
   return (
     <>
       <Header />
@@ -440,7 +444,7 @@ const Contest: React.FunctionComponent = () => {
                                         lineDescription: e,
                                         key: i.toString(),
                                       });
-                                    },
+                                    }
                                   )}
                                 </>
                               </div>
@@ -464,7 +468,7 @@ const Contest: React.FunctionComponent = () => {
                                     handleInputAnswerChange(
                                       "answer",
                                       e.target.value,
-                                      problem,
+                                      problem
                                     )
                                   }
                                 />
@@ -502,7 +506,7 @@ const Contest: React.FunctionComponent = () => {
                   </div>
                 </div>
                 <div className="col-span-4 ">
-                  <SideBar
+                  <ContestSideBar
                     contest={contest}
                     handleContestEnd={handleContestEnd}
                   />

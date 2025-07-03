@@ -62,9 +62,9 @@ const getRankingColumns = (
       header: ({ column }) => (
         <div className="flex justify-center items-center">
           <Button
-            variant="ghost"
+            variant="link"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="mx-auto"
+            className="mx-auto text-text"
           >
             Ratings
             <ArrowUpDown />

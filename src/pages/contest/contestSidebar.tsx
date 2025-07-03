@@ -5,13 +5,14 @@ import { contestEndTime, ended, formattedRule } from "../../../utilities";
 import { BookText } from "lucide-react";
 import Countdown from "react-countdown";
 import { DocumentData } from "firebase/firestore";
+import Bookmark from "@/components/sidebar/bookmark";
 
 interface ISideBarProps {
   contest: DocumentData;
   handleContestEnd: (contest: DocumentData) => Promise<void>;
 }
 
-const SideBar: React.FunctionComponent<ISideBarProps> = ({
+const ContestSideBar: React.FunctionComponent<ISideBarProps> = ({
   contest,
   handleContestEnd,
 }) => {
@@ -88,8 +89,11 @@ const SideBar: React.FunctionComponent<ISideBarProps> = ({
       <Card className="border-border h-120 flex justify-center items-center">
         <h2 className="font-semibold text-lg">Calculator Placeholder</h2>
       </Card>
+      <div className="w-full">
+        <Bookmark/>
+      </div>
     </div>
   );
 };
 
-export default SideBar;
+export default ContestSideBar;

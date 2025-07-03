@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 import router from "./router";
 import ServerManipulator from "./components/serverManipulator";
+import { Chart } from "./components/ui/chart";
 
 function App() {
   return (

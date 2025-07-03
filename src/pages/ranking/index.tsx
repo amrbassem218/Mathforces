@@ -24,7 +24,7 @@ const Ranking: React.FunctionComponent<IRankingProps> = (props) => {
   useSetTitle("ranking")
   return (
     <div className="flex flex-col gap-5">
-      <Header  />
+      <Header page="ranking"/>
       {/* <div className="w-full flex justify-center">
       </div> */}
       <div className="flex justify-around">

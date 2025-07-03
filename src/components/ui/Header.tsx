@@ -53,7 +53,7 @@ const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {
             <Button
               variant={"link"}
               className={`text-md text-text font-normal ${
-                page == "contests" && "underline"
+                page == "problemset" && "underline"
               }`}
               onClick={() => navigate("/problemset")}
             >
@@ -64,7 +64,7 @@ const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {
             <Button
               variant={"link"}
               className={`text-md text-text font-normal ${
-                page == "contests" && "underline"
+                page == "ranking" && "underline"
               }`}
               onClick={() => navigate("/ranking")}
             >

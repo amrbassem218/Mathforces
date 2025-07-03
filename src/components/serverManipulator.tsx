@@ -9,11 +9,14 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { Problem } from "types";
 import { rand, title } from "../../utilities";
-
+import { readFileSync } from 'fs';
+import { formatTex } from "../../texFormatter";
+import { useProblems } from "../../texconverter";
 interface IProblemSetGetterProps {}
 const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
   props,
@@ -126,16 +129,41 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       }
     }
   }
-  const handleAssignTotal = async() => {
-    
+  const [formattedTex, setFormattedTex] = React.useState("");
+  const {problems: explanations} = useProblems({formattedTex});
+  React.useEffect(() => {
+    if(formattedTex){
+      const finish = async() => {
+        const contests = await getDocs(collection(db, "contests"));
+        for(let contest of contests.docs){
+          const contestProblems = await getDocs(collection(db, "contests", contest.id, "problems"));
+          for(let contestProblem of contestProblems.docs){
+            console.log(explanations[contestProblem.id])
+            await updateDoc(doc(db, "contests", contest.id, "problems", contestProblem.id), {
+              explanation: explanations[contestProblem.id]
+            })
+          }
+        }
+      }
+      finish();
+    }
+  }, [formattedTex])
+  const handleAssingExplanation = async() => {
+    await fetch('/2020s.tex').then(async(tex) => {
+      const texString = await tex.text();
+      const formattedTexTemp = formatTex(texString);
+      setFormattedTex(formattedTexTemp);
+    })
   }
+
   return (
-    <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
+    // <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
     // <Button onClick={() => handleAssignDifficulty()}>click Me!</Button>
     // <Button onClick={() => handleAssignAnswered()}>click Me!</Button>
     // <Button onClick={() => handleAssignRating()}>click Me!</Button>
     // <Button onClick={() => handleDelete()}>click Me!</Button>
-    // <Button onClick={() => handleDeleteContests()}>click Me!</Button>
+    <Button onClick={() => handleAssingExplanation()}>click Me!</Button>
+
   );
 };
 

@@ -10,7 +10,7 @@ const ProblemSet: React.FunctionComponent<IProblemSetProps> = (props) => {
   useSetTitle("problemset")
   return (
     <div className="flex flex-col gap-5">
-      <Header  />
+      <Header page="problemset"/>
       {/* <div className="flex justify-center">
       </div> */}
       <div className="flex justify-around">

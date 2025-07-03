@@ -186,7 +186,7 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
   
   return (
     <div>
-      <Header />
+      <Header page="contests"/>
       <div className="grid grid-cols-16">
         <div className="col-start-2 col-span-8 m-10 flex flex-col gap-10">
           {/* Upcoming contests */}

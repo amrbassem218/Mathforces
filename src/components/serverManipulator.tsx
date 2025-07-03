@@ -6,6 +6,7 @@ import {
   doc,
   DocumentData,
   DocumentSnapshot,
+  getDoc,
   getDocs,
   setDoc,
 } from "firebase/firestore";
@@ -84,17 +85,26 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
   //     }, {merge: true})
   //   }
   // }
+  const handleAddContests = async() => {
+    const userSnap = await getDoc(doc(db,"users", "uuN2fGLbnpQfizvf3emCQqITBYJ3"));
+    let contestId = 182;
+    while(contestId > 175){
+      await setDoc(doc(db, "users", "uuN2fGLbnpQfizvf3emCQqITBYJ3", "officialContests", contestId.toString()), {
+        id: contestId.toString(),
+        name: `contest_${contestId}`
+      })
+      contestId--;
+    }
+  }
   const handleAssignRating = async () => {
     const usersSanp = await getDocs(collection(db, "users"));
     for (const user of usersSanp.docs) {
       const randRate = rand(800, 2200);
-      await setDoc(
-        doc(db, "users", user.id),
-        {
-          rating: randRate,
-        },
-        { merge: true },
-      );
+      const contestsSnap = await getDocs(collection(db, "users", user.id, "officialContests"));
+      for(const contest of contestsSnap.docs){
+        const contestData = contest.data();
+
+      }
     }
   };
   const handleDeleteProblems = async() => {
@@ -116,7 +126,9 @@ const ServerManipulator: React.FunctionComponent<IProblemSetGetterProps> = (
       }
     }
   }
-  // const r
+  const handleAssignTotal = async() => {
+    
+  }
   return (
     <Button onClick={() => handleGetProblemsFromContests()}>click Me!</Button>
     // <Button onClick={() => handleAssignDifficulty()}>click Me!</Button>

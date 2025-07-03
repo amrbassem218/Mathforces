@@ -44,9 +44,10 @@ const getStandingData = async ({ contest }: { contest: DocumentData }) => {
         ),
       );
       let userProblemSolved: Record<string, IproblemStanding> = {};
-      let totalScore = 0;
-      let username = (await getDoc(doc(db, "users", user.id))).data()?.username;
-      let referenceCheckDate = new Date(200);
+      
+      let userData = (await getDoc(doc(db, "users", user.id))).data();
+      let username = userData?.username;
+      let total = (await getDoc(doc(db,"users", user.id, `${userStandingData.registrationMode}Contests`, contest.id))).data()?.total;
       userProblemSolvedSnap.forEach((problemSolved) => {
         const problemSolvedData = problemSolved.data();
         let timeAnsweredFormatted = "";
@@ -55,11 +56,7 @@ const getStandingData = async ({ contest }: { contest: DocumentData }) => {
           let contestStartDate = contest.date.toDate();
           let timeAnswered =
             problemDateAnswered.getTime() - contestStartDate.getTime();
-          let timeAnsweredInHours = timeAnswered / 1000 / 60 / 60;
           timeAnsweredFormatted = viewTime(timeAnswered).hoursAndMinutes;
-          console.log("time: ", timeAnsweredInHours);
-          totalScore +=
-            (10 * (problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours;
         }
         userProblemSolved[problemSolved.id] = {
           answer: problemSolvedData.answer,
@@ -74,7 +71,7 @@ const getStandingData = async ({ contest }: { contest: DocumentData }) => {
         registrationMode: userStandingData.registrationMode,
         userId: user.id,
         problems: userProblemSolved,
-        total: Math.round(totalScore),
+        total: Math.round(total) ?? 0 ,
       };
       return userStandingPerformance;
     }),

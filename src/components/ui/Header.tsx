@@ -10,7 +10,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
-import { title } from "../../../utilities";
+import { getUserData, title } from "../../../utilities";
 interface IHeaderProps {
   page?: string;
 }
@@ -20,13 +20,12 @@ const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {
   const [data, setData] = useState<DocumentData | undefined>(undefined);
   const [activeTab, setActiveTab] = useState("");
   useEffect(() => {
-    const getData = async () => {
-      if (user && user.emailVerified) {
-        const docSnap = await getDoc(doc(db, "users", user.uid));
-        setData(docSnap.data());
+    if(user){
+      const getData = async() => {
+        setData(await getUserData(user));
       }
-    };
-    getData();
+      getData();
+    }
   }, [user]);
   const navigate = useNavigate();
   if (loading) {

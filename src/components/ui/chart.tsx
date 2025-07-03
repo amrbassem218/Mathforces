@@ -4,46 +4,40 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 const data = [
   {
     name: 'Page A',
-    current: 4000,
-    goal: 2400,
-    amt: 2400,
+    current: 41,
+    goal: 55,
   },
   {
     name: 'Page B',
-    current: 3000,
-    goal: 1398,
-    amt: 2210,
+    current: 49,
+    goal: 60,
   },
   {
     name: 'Page C',
-    current: 2000,
-    goal: 9800,
-    amt: 2290,
+    current: 58,
+    goal: 64,
   },
   {
     name: 'Page D',
-    current: 2780,
-    goal: 3908,
-    amt: 2000,
+    current: 46,
+    goal: 59,
   },
   {
     name: 'Page E',
-    current: 1890,
-    goal: 4800,
-    amt: 2181,
+    current: 62, // one of the rare times user exceeds
+    goal: 60,
   },
   {
     name: 'Page F',
-    current: 2390,
-    goal: 3800,
-    amt: 2500,
+    current: 52,
+    goal: 67,
   },
   {
     name: 'Page G',
-    current: 3490,
-    goal: 4300,
-    amt: 2100,
+    current: 38,
+    goal: 50,
   },
+  
 ];
 
 export function Chart() {
@@ -61,7 +55,7 @@ export function Chart() {
           >
             <CartesianGrid strokeDasharray="3 3" />
             {/* <XAxis dataKey="name" /> */}
-            {/* <YAxis/> */}
+            <YAxis domain={[30, 70]} hide/>
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="goal" stroke="#8884d8" activeDot={{ r: 8 }} />

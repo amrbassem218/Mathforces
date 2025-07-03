@@ -39,6 +39,7 @@ import { z } from "zod";
 import { auth, db } from "../../../firebaseConfig";
 import { useProblems } from "../../../texconverter";
 import { formatTex } from "../../../texFormatter";
+import useSetTitle from "../../../utilities";
 
 const schema = z.object({
   contestName: z.string().min(10).max(90),
@@ -243,7 +244,7 @@ const CreateContest: React.FunctionComponent = () => {
   };
 
   const difficulty = form.watch("contestDifficulty");
-
+  useSetTitle('create new contest')
   if (loading) {
     return <div>loading...</div>;
   }

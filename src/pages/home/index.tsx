@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/ui/Header";
 import { useAuthUserContext } from "@/context/authUserContext";
 import * as React from "react";
+import useSetTitle from "../../../utilities";
 
 interface IHomeProps {}
 
 const Home: React.FunctionComponent<IHomeProps> = (_props) => {
+  useSetTitle('Home')
   const { logout } = useAuthUserContext();
   return (
     <>

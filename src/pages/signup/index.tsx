@@ -19,6 +19,7 @@ import {
 import { Icons } from "../../components/ui/icons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import useSetTitle from "../../../utilities";
 
 export function Signup() {
   const [user, loading] = useAuthState(auth);
@@ -170,6 +171,7 @@ export function Signup() {
       setWeakPassError("");
     }
   }, [password]);
+  useSetTitle('signup')
   if (loading) {
     return <div>loading... </div>;
   }

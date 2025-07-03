@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { lineDescription, Problems } from "./types";
-// import { rand } from "utilities";
 const processLatex = (content: string): lineDescription[] => {
   const problemDescription: lineDescription[] = [];
   const lines = content.split("\n");

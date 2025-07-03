@@ -17,6 +17,7 @@ import {
 import { Icons } from "../../components/ui/icons";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import useSetTitle from "../../../utilities";
 
 export function Login() {
   const [userError, setUserError] = useState<string>("");
@@ -101,7 +102,7 @@ export function Login() {
       return () => clearTimeout(timer);
     }
   }, [userError]);
-
+  useSetTitle('Login')
   if (loading) {
     return <div>Loading...</div>;
   }

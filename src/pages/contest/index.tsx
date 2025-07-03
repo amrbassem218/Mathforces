@@ -29,7 +29,7 @@ import { lineDescription } from "types";
 import { auth, db } from "../../../firebaseConfig";
 import Error from "../error";
 import Countdown from "react-countdown";
-import useSetTitle, { contestEndTime, ended, isRunnning } from "../../../utilities";
+import useSetTitle, { contestEndTime, ended, getUserData, isRunnning, viewTime } from "../../../utilities";
 import { User } from "firebase/auth";
 import {
   AlertDialog,
@@ -51,9 +51,6 @@ interface problemInputAnswer {
   submitted: boolean;
   timeAnswered: Date | null;
 }
-// interface IcontestProps {
-//     registrationMode: string;
-// }
 const Contest: React.FunctionComponent = () => {
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
@@ -248,11 +245,7 @@ const Contest: React.FunctionComponent = () => {
       }
     }
   }, [contestId, db, id]);
-  // useEffect(() => {
-  //   if(contest){
-  //     useSetTitle(`${contest.name}`)
-  //   }
-  // }, [contest]);
+  useSetTitle(`${contest?.name ?? ""}`);
   if (loading || !problems || !contest) {
     return <div>loading...</div>;
   }
@@ -277,7 +270,7 @@ const Contest: React.FunctionComponent = () => {
       }
       let problemTimeAnswered = Timestamp.now();
       handleInputAnswerChange("submitted", true, problem);
-      handleInputAnswerChange("timeAnswered", problemTimeAnswered, problem);
+      handleInputAnswerChange("timeAnswered", problemTimeAnswered.toDate(), problem);
       setDoc(
         doc(
           db,
@@ -313,14 +306,28 @@ const Contest: React.FunctionComponent = () => {
     let userAnswers = inputAnswers;
     correctAnswers.forEach((problem) => {
       let problemData = problem.data();
-      userAnswers = {
-        ...userAnswers,
-        [problemData.name]: {
-          ...userAnswers[problemData.name],
-          verdict: problemData.answer == userAnswers[problemData.name].answer,
-        },
-      };
+      userAnswers[problemData.name].verdict = problemData.answer == userAnswers[problemData.name].answer;
     });
+
+    let totalScore= 0;
+    Object.values(userAnswers).forEach((problemSolvedData) => {
+      if (problemSolvedData.timeAnswered) {
+        let problemDateAnswered = problemSolvedData.timeAnswered;
+        let contestStartDate = contest.date.toDate();
+        let timeAnswered = problemDateAnswered.getTime() - contestStartDate.getTime();
+        let timeAnsweredInHours = timeAnswered / 1000 / 60 / 60;
+        totalScore +=
+              (10 * (problemSolvedData.verdict ? 1 : -1)) / timeAnsweredInHours;
+        console.log("total Score: ", totalScore)
+      }
+    });
+    await setDoc(doc(db, "users", user.uid, `${registrationMode}Contests`, contestId), {
+      total: totalScore
+    }, {merge:true})
+    let userData = await getUserData(user);
+    if(userData){
+      await setDoc(doc(db, "users", user.uid), {rating:userData.rating+totalScore}, {merge:true})
+    }
     problems.forEach(async (problem) => {
       await setDoc(
         doc(

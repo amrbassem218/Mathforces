@@ -11,7 +11,12 @@ import { db } from "./firebaseConfig";
 import * as React from "react";
 import { useState, useEffect } from "react";
 export const contestEndTime = (contest: DocumentData): Date => {
-  const contestDate = contest.date.toDate();
+  let contestDate: Date;
+  if (typeof contest.date.toDate === "function") {
+    contestDate = contest.date.toDate();
+  } else {
+    contestDate = contest.date;
+  }
   const contestEnd = new Date(
     contestDate.getTime() + contest.length * 60 * 60 * 1000
   );
@@ -165,4 +170,12 @@ export const timeAndDate = (date: Date) => {
     `https://www.timeanddate.com/worldclock/fixedtime.html?day=${part("day")}&month=${part("month")}&year=${part("year")}&hour=${(part("dayPeriod") == "AM" || Number(part("hour")) == 12) ? part("hour") : (Number(part("hour")) + 12).toString()}&min=${part("minute")}&sec=0`,
     "_blank"
   );
+};
+
+export const getUserData = async (user: User) => {
+  if (user && user.emailVerified) {
+    const userSnap = await getDoc(doc(db, "users", user.uid));
+    return userSnap.data();
+  }
+  return undefined;
 };

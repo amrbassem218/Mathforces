@@ -67,7 +67,9 @@ const Goal: React.FunctionComponent<IGoalProps> = ({remove}) => {
                 {/* <h4>{nextTitle(userData.rating).title.text}</h4> */}
             </CardFooter>
             </>
-            : <></>
+            : <div className='px-2'>
+                <p className='text-text/70'><button className='underline text-primary font-semibold' onClick={() => navigate('/login')}>Login</button> and strive for a new goal!!</p>
+            </div>
         }
     </Card>
   );

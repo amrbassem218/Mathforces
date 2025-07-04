@@ -40,6 +40,7 @@ import { auth, db } from "../../../firebaseConfig";
 import { useProblems } from "../../../texconverter";
 import { formatTex } from "../../../texFormatter";
 import useSetTitle from "../../../utilities";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const schema = z.object({
   contestName: z.string().min(10).max(90),
@@ -252,168 +253,186 @@ const CreateContest: React.FunctionComponent = () => {
     navigate("/login");
   }
   return (
-    <div>
+    <div className="flex flex-col">
       <Header />
-      <div className="grid grid-cols-12">
-        <div className="col-span-8">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleCreateContestSubmit)}>
-              <FormField
-                control={form.control}
-                name="contestName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contest Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Contest Name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="contestTex"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contest Latex</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Paste Contest Tex here"
-                        {...field}
-                        onChange={(e) => {
-                          setContestTexInput(e.target.value);
-                          form.setValue("contestTex", e.target.value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="explanations"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Problems Explanation</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Paste Problems Explanation here"
-                        {...field}
-                        onChange={(e) => {
-                          setExplanationTexInput(e.target.value);
-                          form.setValue("explanations", e.target.value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {Object.keys(problems).length > 0 && <h1>Answers: </h1> &&
-                Object.keys(problems).map((e, i) => (
-                  <div>
-                    <FormItem key={`${i}-answer`}>
-                      <FormLabel>{e}</FormLabel>
+      <div className="w-full flex justify-center items-center">
+        <Card className="w-150 my-20 border-border">
+          <CardHeader>
+            <CardTitle className="text-xl">Create New Contest</CardTitle>
+            <CardDescription>Go <Button variant={'link'} className="" onClick={() => window.open('https://kskedlaya.org/putnam-archive/')}>here</Button> for mock data</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleCreateContestSubmit)} className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="contestName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contest Name</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
-                          placeholder={`${e} answer`}
-                          value={answers[e as keyof typeof answers]}
-                          onChange={(event) => {
-                            const value = event.target.value;
-                            setAnswers((prev) => ({
-                              ...prev,
-                              [e as keyof typeof answers]: value,
-                            }));
-                          }}
-                          required
+                          type="text"
+                          placeholder="Contest Name"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
-                  </div>
-                ))}
-              <DateAndTimePicker
-                onChange={({ date, time }) => {
-                  if (date instanceof Date) {
-                    form.setValue("contestDate", date);
-                  }
-                  if (typeof time === "string") {
-                    form.setValue("contestTime", time);
-                  }
-                }}
-              />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant={"outline"}>
-                    {difficulty ? difficulty : "Select Difficulty"}{" "}
-                    <FaCaretDown />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-40" align="start">
-                  <DropdownMenuLabel>Contest Level</DropdownMenuLabel>
-                  {Object.values(contestDifficultyTypes).map(
-                    (contestType, i) => {
-                      return (
-                        <div key={i}>
-                          <DropdownMenuGroup>
-                            {contestType.map((contest, i) => (
-                              <DropdownMenuItem
-                                key={i}
-                                onClick={() =>
-                                  form.setValue("contestDifficulty", contest)
-                                }
-                              >
-                                {contest}
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuGroup>
-                          {i + 1 < contestType.length && (
-                            <DropdownMenuSeparator />
-                          )}
-                        </div>
-                      );
-                    }
                   )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <FormField
-                control={form.control}
-                name="contestLength"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contest Length</FormLabel>
-                    <FormControl>
-                      <div className="flex flex-col gap-3">
-                        <Input
-                          type="number"
-                          id="length"
-                          min="0"
-                          step="0.5"
-                          placeholder="e.g. 2"
+                />
+                <FormField
+                  control={form.control}
+                  name="contestTex"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contest Latex</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Paste Contest Tex here"
                           {...field}
-                          className="w-24"
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value))
-                          }
+                          onChange={(e) => {
+                            setContestTexInput(e.target.value);
+                            form.setValue("contestTex", e.target.value);
+                          }}
+                          className="resize-none overflow-auto h-16"
                         />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="explanations"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Problems Explanation</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Paste Problems Explanation here"
+                          {...field}
+                          onChange={(e) => {
+                            setExplanationTexInput(e.target.value);
+                            form.setValue("explanations", e.target.value);
+                          }}
+                          className="resize-none overflow-auto h-16"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                  {Object.keys(problems).length > 0 
+                  && <h1>Answers: </h1> 
+                  && <div className="grid grid-cols-12 gap-2">
+                      {Object.keys(problems).map((e, i) => (
+                        <div className="col-span-4">
+                          <FormItem key={`${i}-answer`}>
+                            <FormLabel>{e}</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder={`${e} answer`}
+                                value={answers[e as keyof typeof answers]}
+                                onChange={(event) => {
+                                  const value = event.target.value;
+                                  setAnswers((prev) => ({
+                                    ...prev,
+                                    [e as keyof typeof answers]: value,
+                                  }));
+                                }}
+                                
+                                required
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        </div>
+                      ))}
+                    </div>
+                  }
+                <DateAndTimePicker
+                  onChange={({ date, time }) => {
+                    if (date instanceof Date) {
+                      form.setValue("contestDate", date);
+                    }
+                    if (typeof time === "string") {
+                      form.setValue("contestTime", time);
+                    }
+                  }}
+                />
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant={"outline"}>
+                      {difficulty ? difficulty : "Select Difficulty"}{" "}
+                      <FaCaretDown />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-40" align="start">
+                    <DropdownMenuLabel>Contest Level</DropdownMenuLabel>
+                    {Object.values(contestDifficultyTypes).map(
+                      (contestType, i) => {
+                        return (
+                          <div key={i}>
+                            <DropdownMenuGroup>
+                              {contestType.map((contest, i) => (
+                                <DropdownMenuItem
+                                  key={i}
+                                  onClick={() =>
+                                    form.setValue("contestDifficulty", contest)
+                                  }
+                                >
+                                  {contest}
+                                </DropdownMenuItem>
+                              ))}
+                            </DropdownMenuGroup>
+                            {i + 1 < contestType.length && (
+                              <DropdownMenuSeparator />
+                            )}
+                          </div>
+                        );
+                      }
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <FormField
+                  control={form.control}
+                  name="contestLength"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contest Length</FormLabel>
+                      <FormControl>
+                        <div className="flex flex-col gap-3">
+                          <Input
+                            type="number"
+                            id="length"
+                            min="0"
+                            step="0.5"
+                            placeholder="e.g. 2"
+                            {...field}
+                            className="w-24"
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="">Submit</Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
       </div>
+      {/* <div className="grid grid-cols-12">
+        <div className="col-start-1 col-span-6 m-10 flex flex-col gap-10">
+        </div>
+      </div> */}
     </div>
   );
 };

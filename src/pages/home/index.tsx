@@ -3,12 +3,17 @@ import Header from "@/components/ui/Header";
 import { useAuthUserContext } from "@/context/authUserContext";
 import * as React from "react";
 import useSetTitle from "../../../utilities";
+import { useNavigate } from "react-router-dom";
 
 interface IHomeProps {}
 
 const Home: React.FunctionComponent<IHomeProps> = (_props) => {
   useSetTitle('Home')
   const { logout } = useAuthUserContext();
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    navigate('/contests');
+  }, [])
   return (
     <>
       <div className="flex flex-col h-screen">

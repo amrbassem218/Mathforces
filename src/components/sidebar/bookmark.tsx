@@ -129,8 +129,8 @@ const Bookmark: React.FunctionComponent<IBookmarkProps> = (props) => {
             </div>
           }
         </div> 
-        : <div>
-          <p className='text-text/70'><button className='underline text-primary font-semibold '>Login</button> and start saving bookmarks!!</p>
+        : <div className='py-4'>
+          <p className='text-text/70'><button className='underline text-primary font-semibold' onClick={() => navigate('/login')}>Login</button> and start saving bookmarks!!</p>
         </div>
         }
       </CardContent>

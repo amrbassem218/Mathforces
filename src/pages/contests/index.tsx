@@ -54,15 +54,15 @@ const Contests: React.FunctionComponent<IContestsProps> = (_props) => {
         if (ended(contestData)) {
           pastContestTemp.push(contestData);
         } else {
-          console.log(contestData.date);
+          console.log(contestData.dateFull);
           upcomingContestTemp.push(contestData);
         }
       });
       pastContestTemp.sort((a, b) => {
-        return b.date - a.date;
+        return b.dateFull - a.dateFull;
       });
       upcomingContestTemp.sort((a, b) => {
-        return a.date - b.date;
+        return a.dateFull - b.dateFull;
       });
       setPastContests(pastContestTemp);
       setUpcomingContests(upcomingContestTemp);

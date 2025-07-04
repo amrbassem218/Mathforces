@@ -127,7 +127,7 @@ const Standing: React.FunctionComponent<IStandingProps> = ({
           ) : (
             <TableRow>
               <TableCell className="text-center" colSpan={columns.length}>
-                No result
+                No one answered this contest yet, be the first!!
               </TableCell>
             </TableRow>
           )}

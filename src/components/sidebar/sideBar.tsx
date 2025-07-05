@@ -11,11 +11,14 @@ interface ISideBarProps {
 
 const SideBar: React.FunctionComponent<ISideBarProps> = ({align}) => {
   const [removeRanking, setRemoveRanking] = useState(false);
+  const [removeGoal, setRemoveGoal] = useState(false);
   return (
     <div className={`flex flex-col pr-10 gap-5 w-full ${align ? align : "items-end"} my-10`}>
+      {!removeGoal &&
       <div className="w-80">
-        <Goal/>
+        <Goal remove={() => setRemoveGoal(true)}/>
       </div>
+      }
       {
         !removeRanking &&
         <div className="w-80">

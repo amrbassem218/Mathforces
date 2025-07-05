@@ -4,12 +4,25 @@ import { GoalIcon, MoreHorizontal } from 'lucide-react';
 import { BsBarChartFill } from "react-icons/bs";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../../firebaseConfig';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useNavigate } from 'react-router-dom';
 import { Chart } from '../ui/chart';
 import { nextTitle, title } from '../../../utilities';
 import { getDoc, doc, DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 interface IGoalProps {
     remove?: Function;
 }
@@ -38,9 +51,19 @@ const Goal: React.FunctionComponent<IGoalProps> = ({remove}) => {
                 <BsBarChartFill size={20}/>
                 <CardTitle className='text-lg font-semibold'>Next Goal</CardTitle>
             </div>
-            <button>
-                <MoreHorizontal className="cursor-pointer "/>
-            </button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <MoreHorizontal className="cursor-pointer "/>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40 bg-background rounded-md border-2 border-border" align="start">
+                    <DropdownMenuLabel className="font-semibold">Next Goal</DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem onClick={() => navigate('/profile')} className="hover:bg-gray-300 cursor-pointer">see full chart</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => remove ? remove() : ''} className="text-accent font-medium rounded-sm cursor-pointer hover:bg-accent hover:text-lavender">remove this</DropdownMenuItem>
+                        {/* <DropdownMenuItem className="px-2"><Button variant={'ghost'} className="w-full flex justify-start p-0 m-0">Remove this</Button></DropdownMenuItem> */}
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>   
         </CardHeader>
             {
             userData 

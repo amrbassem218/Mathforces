@@ -9,6 +9,7 @@ import Contests from "./pages/contests";
 import CreateContest from "./pages/create-contest";
 import Ranking from "./pages/ranking";
 import ProblemSet from "./pages/problemset";
+import Profile from "./pages/profile";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,11 @@ export const router = createBrowserRouter([
   {
     element: <ProblemSet />,
     path: "problemset",
+    errorElement: <Error />,
+  },
+  {
+    element: <Profile />,
+    path: "profile/:id",
     errorElement: <Error />,
   },
 ]);

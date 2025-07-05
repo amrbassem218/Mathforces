@@ -172,8 +172,12 @@ export const timeAndDate = (date: Date) => {
   );
 };
 
-export const getUserData = async (user: User) => {
-  if (user && user.emailVerified) {
+export const getUserData = async (user: User | string) => {
+  if (typeof user == "string") {
+    const userSnap = await getDoc(doc(db, "users", user));
+    return userSnap.data();
+  }
+  else if((user && user.emailVerified)){
     const userSnap = await getDoc(doc(db, "users", user.uid));
     return userSnap.data();
   }

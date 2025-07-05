@@ -58,7 +58,10 @@ const Goal: React.FunctionComponent<IGoalProps> = ({remove}) => {
                 <DropdownMenuContent className="w-40 bg-background rounded-md border-2 border-border" align="start">
                     <DropdownMenuLabel className="font-semibold">Next Goal</DropdownMenuLabel>
                     <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => navigate('/profile')} className="hover:bg-gray-300 cursor-pointer">see full chart</DropdownMenuItem>
+                        {
+                            userData &&
+                            <DropdownMenuItem onClick={() => navigate(`/profile/${user?.uid}`)} className="hover:bg-gray-300 cursor-pointer">see full chart</DropdownMenuItem>
+                        }
                         <DropdownMenuItem onClick={() => remove ? remove() : ''} className="text-accent font-medium rounded-sm cursor-pointer hover:bg-accent hover:text-lavender">remove this</DropdownMenuItem>
                         {/* <DropdownMenuItem className="px-2"><Button variant={'ghost'} className="w-full flex justify-start p-0 m-0">Remove this</Button></DropdownMenuItem> */}
                     </DropdownMenuGroup>

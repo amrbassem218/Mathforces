@@ -156,7 +156,7 @@ const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {
               <SheetDescription>
                 <div className="flex items-center gap-2 justify-start p-3">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={`${data?.pfp ?? "../../../public/nopfp.jpg"}`}/>
+                    <AvatarImage src={`${data?.pfp ?? "/nopfp.jpg"}`}/>
                     <AvatarFallback>VC</AvatarFallback>
                   </Avatar>
                   <h1 className="text-lg">@{data.username}</h1>

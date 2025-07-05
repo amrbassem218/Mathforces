@@ -27,13 +27,25 @@ import { Button } from "@/components/ui/button";
 import {IoIosPodium} from "react-icons/io"
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 interface IRankingProps {
   size: number;
   full: boolean;
   remove?: Function;
 }
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 const RankingTable: React.FunctionComponent<IRankingProps> = ({size, full, remove}) => {
   const { data, columns } = useGetRanking();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -92,8 +104,9 @@ const RankingTable: React.FunctionComponent<IRankingProps> = ({size, full, remov
             <DropdownMenuContent className="w-40 bg-background rounded-md border-2 border-border" align="start">
               <DropdownMenuLabel className="font-semibold">Ranking</DropdownMenuLabel>
               <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate('/ranking')} className="hover:bg-gray-300 cursor-pointer">See more</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => remove ? remove() : ''} className="bg-red-500 rounded-sm text-lavender cursor-pointer hover:bg-red-600">remove this</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/ranking')} className="hover:bg-gray-300 cursor-pointer">see more</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => remove ? remove() : ''} className="text-accent font-medium rounded-sm cursor-pointer hover:bg-accent hover:text-lavender">remove this</DropdownMenuItem>
+              {/* <DropdownMenuItem className="px-2"><Button variant={'ghost'} className="w-full flex justify-start p-0 m-0">Remove this</Button></DropdownMenuItem> */}
             </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

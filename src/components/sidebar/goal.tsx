@@ -7,7 +7,7 @@ import { auth, db } from '../../../firebaseConfig';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useNavigate } from 'react-router-dom';
 import { Chart } from '../ui/chart';
-import { title } from '../../../utilities';
+import { nextTitle, title } from '../../../utilities';
 import { getDoc, doc, DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 interface IGoalProps {
@@ -31,20 +31,6 @@ const Goal: React.FunctionComponent<IGoalProps> = ({remove}) => {
         getUserData();
     }, [user]);
 
-    const nextTitle = (rating: number) => {
-      const curTitle = title(rating).name;
-      let base = 0;
-      while(base - rating < 0){
-          base += 100;
-      }
-      let ratingDiff = base-rating;
-      console.log("base: ", base);
-      while(title(rating+ratingDiff).name == curTitle){
-          ratingDiff += 100;
-      }
-    //   console.log(nextTitle(rating).title.text);
-      return {title: title(rating+ratingDiff), ratingDiff: ratingDiff}
-    }
   return (
     <Card className='border-border pt-2'>
         <CardHeader className='flex  justify-between px-4 py-2 border-b-1 border-border'>

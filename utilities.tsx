@@ -179,3 +179,17 @@ export const getUserData = async (user: User) => {
   }
   return undefined;
 };
+
+export const nextTitle = (rating: number) => {
+  const curTitle = title(rating).name;
+  let base = 0;
+  while(base - rating < 0){
+      base += 100;
+  }
+  let ratingDiff = base-rating;
+  console.log("base: ", base);
+  while(title(rating+ratingDiff).name == curTitle){
+      ratingDiff += 100;
+  }
+  return {title: title(rating+ratingDiff), ratingDiff: ratingDiff}
+}

@@ -123,6 +123,19 @@
   .rule span {
     @apply font-semibold;
   }
+  .hover-lavender:hover h1,
+  .hover-lavender:hover h2,
+  .hover-lavender:hover h3,
+  .hover-lavender:hover h4,
+  .hover-lavender:hover h5,
+  .hover-lavender:hover h6,
+  .hover-lavender:hover p,
+  .hover-lavender:hover Button {
+    color: var(--color-lavender) !important;
+  }
+  .sidebar-profile-item{
+    @apply px-4 py-1 flex gap-3 border-border border-1  items-center rounded-sm cursor-pointer w-full hover:bg-accent hover:!text-lavender
+  }
 }
 
 /* Add these styles for latex.js content */

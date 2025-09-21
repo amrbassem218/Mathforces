@@ -87,14 +87,9 @@ export function Signup() {
       const response = await logInWithGoogle();
       if (response) {
         setUserError("");
-        navigate("/");
+        navigate("/signup/username");
         const user = response.user;
-        await setDoc(doc(db, "users", response.user.uid), {
-          username: userName,
-          email: user.email,
-          ranking: "Beginner",
-          rating: 1000,
-        });
+        
       } else {
         setUserError("Something went wrong");
       }

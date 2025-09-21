@@ -64,6 +64,7 @@ export function Login() {
       const response = await logInWithGoogle();
       if (response) {
         setUserError("");
+        navigate("/");
       } else {
         setUserError("Something went wrong");
       }
@@ -73,6 +74,10 @@ export function Login() {
         error.code === "auth/email-already-in-use"
       ) {
         setUserError("This email is already in use");
+      } else if (error.message) {
+        setUserError(error.message);
+      } else {
+        setUserError("Failed to sign in with Google");
       }
     }
   };
@@ -83,6 +88,7 @@ export function Login() {
       const response = await logInWithGithub();
       if (response) {
         setUserError("");
+        navigate("/");
       } else {
         setUserError("Something went wrong");
       }
@@ -92,6 +98,10 @@ export function Login() {
         error.code === "auth/email-already-in-use"
       ) {
         setUserError("This email is already in use");
+      } else if (error.message) {
+        setUserError(error.message);
+      } else {
+        setUserError("Failed to sign in with GitHub");
       }
     }
   };

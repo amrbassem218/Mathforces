@@ -34,6 +34,7 @@ export function Signup() {
   const [weakPass, setWeakPass] = useState<boolean | null>(null);
   const [weakPassError, setWeakPassError] = useState<string>("");
   const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) {
@@ -86,6 +87,14 @@ export function Signup() {
       const response = await logInWithGoogle();
       if (response) {
         setUserError("");
+        navigate("/");
+        const user = response.user;
+        await setDoc(doc(db, "users", response.user.uid), {
+          username: userName,
+          email: user.email,
+          ranking: "Beginner",
+          rating: 1000,
+        });
       } else {
         setUserError("Something went wrong");
       }
@@ -95,9 +104,12 @@ export function Signup() {
         error.code == "auth/email-already-in-use"
       ) {
         setUserError("This email is already in use");
+      } else if (error.message) {
+        setUserError(error.message);
+      } else {
+        setUserError("Failed to sign in with Google");
       }
       console.error(error);
-      console.log("everything is all over the place");
     }
   };
   const handleGithubSubmit = async (e: React.MouseEvent<HTMLElement>) => {
@@ -105,10 +117,9 @@ export function Signup() {
     try {
       const response = await logInWithGithub();
       if (response) {
-        console.log("All good");
         setUserError("");
+        navigate("/");
       } else {
-        console.log("Didn't get data");
         setUserError("Something went wrong");
       }
     } catch (error: any) {
@@ -117,9 +128,12 @@ export function Signup() {
         error.code == "auth/email-already-in-use"
       ) {
         setUserError("This email is already in use");
+      } else if (error.message) {
+        setUserError(error.message);
+      } else {
+        setUserError("Failed to sign in with GitHub");
       }
       console.error(error);
-      console.log("everything is all over the place");
     }
   };
   useEffect(() => {
@@ -135,6 +149,7 @@ export function Signup() {
       return () => clearInterval(verifiedCheck);
     }
   }, [emailVerificationSent]);
+
   useEffect(() => {
     const checkAvailability = async () => {
       const querySnapShot = await getDocs(collection(db, "users"));
@@ -156,6 +171,7 @@ export function Signup() {
     };
     checkAvailability();
   }, [userName]);
+
   useEffect(() => {
     if (userError) {
       const timer = setTimeout(() => setUserError(""), 2500);
@@ -193,7 +209,6 @@ export function Signup() {
           <CardContent className="grid gap-4">
             <div className="grid grid-cols-2 gap-6">
               <Button
-                disabled
                 variant="outline"
                 className="cursor-pointer border-border"
                 onClick={handleGithubSubmit}
@@ -203,7 +218,6 @@ export function Signup() {
                 GitHub
               </Button>
               <Button
-                disabled
                 variant="outline"
                 onClick={handleGoogleSubmit}
                 className="cursor-pointer border-border"

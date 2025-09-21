@@ -5,41 +5,7 @@ import { auth, db } from "../../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@radix-ui/react-hover-card";
-import { getUserData, nextTitle, title } from "../../../utilities";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Contact, Heart, Info, Settings, Settings2, User, UserPen } from "lucide-react";
-import { FaHeart, FaPen, FaUser, FaUserFriends, FaUserPlus } from "react-icons/fa";
-import { useAuthUserContext } from "@/context/authUserContext";
-import { IoSettingsSharp } from "react-icons/io5";
-import { MdContactSupport } from "react-icons/md";
+import { getUserData } from "../../../utilities";
 import ProfileSheet from "./profileSheet";
 
 interface IHeaderProps {
@@ -57,6 +23,9 @@ const Header: React.FunctionComponent<IHeaderProps> = ({ page }) => {
         setData(await getUserData(user));
       }
       getData();
+      console.log("user's here")
+      console.log(user);
+      console.log("user's data: ", data);
     }
   }, [user]);
   const navigate = useNavigate();

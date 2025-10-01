@@ -208,6 +208,7 @@ export function Signup() {
                 className="cursor-pointer border-border"
                 onClick={handleGithubSubmit}
                 type="button"
+                disabled
               >
                 <Icons.gitHub />
                 GitHub

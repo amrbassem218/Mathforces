@@ -144,7 +144,6 @@ export function Login() {
                 GitHub
               </Button>
               <Button
-                disabled
                 variant="outline"
                 onClick={handleGoogleSubmit}
                 className="cursor-pointer border-border"

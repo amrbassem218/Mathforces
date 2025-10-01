@@ -117,6 +117,9 @@ export function Login() {
     return <div>Loading...</div>;
   }
 
+  if(user){
+    navigate('/');
+  }
   return (
     <div className="flex flex-col min-h-screen w-full">
       <Header />

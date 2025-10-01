@@ -109,25 +109,25 @@ const ProfileSheet: React.FunctionComponent<IProfileSheetProps> = ({data}) => {
                   <FaUser size={14}/>
                   <h2>Your Profile</h2>
                 </li>
-                <li className="sidebar-profile-item hover-lavender">
+                <li className="sidebar-profile-item hover:bg-transparent cursor-default hover:text-gray-400 text-gray-400">
                   <FaPen size={14}/>
-                  <h2>Your Contests</h2>
+                  <h2 className='text-gray-400'>Your Contests</h2>
                 </li>
-                <li className="sidebar-profile-item hover-lavender">
+                <li className="sidebar-profile-item hover:bg-transparent cursor-default hover:text-gray-400 text-gray-400">
                   <FaUserPlus size={15}/>
-                  <h2>Friends/Followers</h2>
+                  <h2 className='text-gray-400'>Friends/Followers</h2>
                 </li>
-                <li className="sidebar-profile-item hover-lavender">
+                <li className="sidebar-profile-item hover:bg-transparent cursor-default hover:text-gray-400 text-gray-400">
                   <FaHeart size={15}/>
-                  <h2>Saved Contests</h2>
+                  <h2 className='text-gray-400'>Saved Contests</h2>
                 </li>
-                <li className="sidebar-profile-item hover-lavender">
+                <li className="sidebar-profile-item hover:bg-transparent cursor-default hover:text-gray-400 text-gray-400">
                   <IoSettingsSharp size={16}/>
-                  <h2>Settings</h2>
+                  <h2 className='text-gray-400'>Settings</h2>
                 </li>
-                <li className="sidebar-profile-item hover-lavender">
+                <li className="sidebar-profile-item hover:bg-transparent cursor-default hover:text-gray-400 text-gray-400">
                   <MdContactSupport size={17}/>
-                  <h2>Support</h2>
+                  <h2 className='text-gray-400'>Support</h2>
                 </li>
               </ul>
             </nav>

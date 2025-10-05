@@ -45,6 +45,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
 :root {
   --radius: 0.625rem;
 
@@ -80,7 +81,8 @@
   --destructive-foreground: #ffffff;
 
   /* Form elements */
-  --border: #1e150633; /* 20% opacity of text */
+  --border: #1e150633;
+  /* 20% opacity of text */
   --input: #1e150610;
   --border-auth: #8ed7eb;
   /* --placeholder: */
@@ -97,15 +99,17 @@
   --sidebar-ring: #8ed7eb;
 }
 
-@theme {
-}
+@theme {}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   h1,
   h2,
   h3,
@@ -117,12 +121,15 @@
   CardHeader {
     @apply text-text;
   }
+
   .table_element {
     @apply border-border border-1;
   }
+
   .rule span {
     @apply font-semibold;
   }
+
   .hover-lavender:hover h1,
   .hover-lavender:hover h2,
   .hover-lavender:hover h3,
@@ -133,8 +140,9 @@
   .hover-lavender:hover Button {
     color: var(--color-lavender) !important;
   }
-  .sidebar-profile-item{
-    @apply px-4 py-1 flex gap-3 border-border border-1  items-center rounded-sm cursor-pointer w-full hover:bg-accent hover:!text-lavender
+
+  .sidebar-profile-item {
+    @apply px-4 py-1 flex gap-3 border-border border-1 items-center rounded-sm cursor-pointer w-full hover:bg-accent hover: !text-lavender
   }
 }
 
@@ -166,5 +174,5 @@
 }
 
 .latex-content .enumerate li {
-  margin: 0.5em 0;
+    margin: 0.5em 0;
 }

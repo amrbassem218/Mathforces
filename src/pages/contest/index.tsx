@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import Standing from "./standing";
 import Editorials from "./editorials";
+import Support from './support'
 import ContestSideBar from "./contestSidebar";
 interface problemInputAnswer {
   answer: string | null;
@@ -528,9 +529,14 @@ const Contest: React.FunctionComponent = () => {
           </TabsContent>
           <TabsContent value="editorials" className="w-full">
             <div className="w-full flex justify-center">
-              <Editorials contest={contest} problems={problems} />
+              <Support contest={contest} problems={problems} />
               {/* <div className='col-span-9 col-start-2'>
                         </div> */}
+            </div>
+          </TabsContent>
+          <TabsContent value="support" className="w-full">
+            <div className="w-full flex justify-center">
+
             </div>
           </TabsContent>
         </Tabs>

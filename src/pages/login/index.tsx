@@ -120,6 +120,7 @@ export function Login() {
   if(user){
     navigate('/');
   }
+
   return (
     <div className="flex flex-col min-h-screen w-full">
       <Header />
@@ -182,10 +183,7 @@ export function Login() {
               <Input
                 id="email"
                 type="email"
-                value={email}
-                placeholder="m@example.com"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+                value={email} placeholder="m@example.com" onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>

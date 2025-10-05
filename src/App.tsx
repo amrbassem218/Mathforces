@@ -4,7 +4,6 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/next";
 import router from "./router";
 import ServerManipulator from "./components/serverManipulator";
 import { Chart } from "./components/ui/chart";
@@ -13,6 +12,7 @@ import { DocumentData } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebaseConfig";
 import { getUserData } from "../utilities";
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   const [userProfile, setUserProfile] = useState<DocumentData | undefined>();
@@ -32,6 +32,7 @@ function App() {
   if(loading) return <p>loading...</p>
   return (
     <div>
+      <Analytics/>
       <UserContext.Provider value={{ userProfile, setUserProfile }}>
         <Toaster />
         <RouterProvider router={router} />

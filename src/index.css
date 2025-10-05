@@ -142,7 +142,7 @@
   }
 
   .sidebar-profile-item {
-    @apply px-4 py-1 flex gap-3 border-border border-1 items-center rounded-sm cursor-pointer w-full hover:bg-accent hover: !text-lavender
+    @apply px-4 py-1 flex gap-3 border-border border-1 items-center rounded-sm cursor-pointer w-full hover:bg-accent !text-lavender
   }
 }
 

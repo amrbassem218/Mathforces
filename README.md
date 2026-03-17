@@ -1,7 +1,11 @@
 <div align="center">
   <img src="./public/github_mini_logo_light_with_bg.png" width="126" alt="Mathforces logo">
   <h1>Mathforces</h1>
-  Starting with math, we'll make all STEM fun (ever heard of <a href="https://www.chess.com/">chess.com</a>) 
+  <a style="displaY: block" href="https://numitz.vercel.app/"> [Website Link]
+  </a>
+  <span>
+    Starting with math, we'll make all STEM fun (ever heard of <a href="https://www.chess.com/">chess.com</a>) 
+  </span>
 </div>
 <br>
 

@@ -3,6 +3,7 @@
   <h1>Mathforces</h1>
   <a style="displaY: block" href="https://mathforces-pi.vercel.app/"> [Website Link]
   </a>
+  <br>
   <span>
     Starting with math, we'll make all STEM fun (ever heard of <a href="https://www.chess.com/">chess.com</a>) 
   </span>
